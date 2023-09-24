@@ -93,7 +93,7 @@ class Fluid {
 };
 
 
-void drawParticles(sf::RenderWindow& window, Fluid& f){
+void drawParticles(sf::RenderTexture& window, Fluid& f){
 
     sf::RectangleShape rect(sf::Vector2f(1, 1));
 
@@ -121,6 +121,9 @@ int main(int args, char** argv){
     float WIDTH = 20;
     float HEIGHT = 20;
 
+    float WINDOW_WIDTH = 1000;
+    float WINDOW_HEIGHT = 1000;
+
     Fluid f(WIDTH, HEIGHT, 1);
 
 
@@ -139,12 +142,20 @@ int main(int args, char** argv){
     }
 
 
-    sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Fluid Simulation");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Fluid Simulation");
+    sf::RenderTexture texture;
+    texture.create(WIDTH, HEIGHT);
+    texture.setSmooth(true);
 
+    sf::Vector2f scale(WINDOW_WIDTH / WIDTH, WINDOW_HEIGHT / HEIGHT);
 
     for(int i = 0; i < 100000; i++){
         f.physics(0.0001);
-        drawParticles(window, f);
+        drawParticles(texture, f);
+        window.clear();
+        sf::Sprite sprite(texture.getTexture());
+        sprite.setScale(scale);
+        window.draw(sprite);
         window.display();
     }
 
