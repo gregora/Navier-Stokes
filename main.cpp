@@ -42,12 +42,59 @@ class Fluid {
 
         }
 
+
+        void diffuse(float delta, float viscosity = 0.1){
+            Particle* newParticles = new Particle[width * height];
+
+            for(uint k = 0; k < 20; k++){
+                for(uint i = 1; i < width - 1; i++){
+                    for(uint j = 1; j < height - 1; j++){
+                        
+                        Particle& p = newParticles[coords2index(i, j, width)];
+                        Particle& p0 = particles[coords2index(i, j, width)];
+
+                        Particle& p1 = newParticles[coords2index(i + 1, j, width)];
+                        Particle& p2 = newParticles[coords2index(i - 1, j, width)];
+                        Particle& p3 = newParticles[coords2index(i, j + 1, width)];
+                        Particle& p4 = newParticles[coords2index(i, j - 1, width)];
+
+                        float vx = p.vx;
+                        float vy = p.vy;
+
+                        
+                        /*
+                        float vxxx = (particles[coords2index(i + 1, j, width)].vx - 2 * particles[coords2index(i + 1, j, width)].vx + 2 * particles[coords2index(i, j, width)].vx + particles[coords2index(i - 1, j, width)].vx) / (dx * dx);
+                        float vxyy = (particles[coords2index(i, j + 1, width)].vx - 2 * particles[coords2index(i, j, width)].vx + 2 * particles[coords2index(i, j - 1, width)].vx + particles[coords2index(i, j - 1, width)].vx) / (dx * dx);
+
+                        float vyxx = (particles[coords2index(i + 1, j, width)].vy - 2 * particles[coords2index(i, j, width)].vy + 2 * particles[coords2index(i - 1, j, width)].vy + particles[coords2index(i - 1, j, width)].vy) / (dx * dx);
+                        float vyyy = (particles[coords2index(i, j + 1, width)].vy - 2 * particles[coords2index(i, j, width)].vy + 2 * particles[coords2index(i, j - 1, width)].vy + particles[coords2index(i, j - 1, width)].vy) / (dx * dx);
+
+                        vx = vx + delta * ((vxxx + vxyy)*viscosity);
+                        vy = vy + delta * ((vyxx + vyyy)*viscosity);
+                        */
+                        float a = (delta * viscosity) / (dx * dx);
+                        vx = p0.vx + a * (p1.vx + p2.vx + p3.vx + p4.vx) / (1 + 4 * a);
+                        vy = p0.vy + a * (p1.vy + p2.vy + p3.vy + p4.vy) / (1 + 4 * a);
+
+                        newParticles[coords2index(i, j, width)].vx = vx;
+                        newParticles[coords2index(i, j, width)].vy = vy;
+
+                    }
+                }
+            }
+
+            delete particles;
+            particles = newParticles;
+
+        }
+
         void physics(float delta){
+
+            diffuse(delta);
 
             Particle* newParticles = new Particle[width * height];
 
             float viscosity = 0.1;
-            float max_change = 0;
 
             for(uint i = 1; i < width - 1; i++){
                 for(uint j = 1; j < height - 1; j++){
@@ -63,27 +110,14 @@ class Fluid {
                     float vyy = (particles[coords2index(i, j + 1, width)].vy - particles[coords2index(i, j - 1, width)].vy) / (2 * dx);
                     float vyx = (particles[coords2index(i + 1, j, width)].vy - particles[coords2index(i - 1, j, width)].vy) / (2 * dx);
 
-                    float vxxx = (particles[coords2index(i + 1, j, width)].vx - 2 * particles[coords2index(i + 1, j, width)].vx + 2 * particles[coords2index(i, j, width)].vx + particles[coords2index(i - 1, j, width)].vx) / (dx * dx);
-                    float vxyy = (particles[coords2index(i, j + 1, width)].vx - 2 * particles[coords2index(i, j, width)].vx + 2 * particles[coords2index(i, j - 1, width)].vx + particles[coords2index(i, j - 1, width)].vx) / (dx * dx);
-
-                    float vyxx = (particles[coords2index(i + 1, j, width)].vy - 2 * particles[coords2index(i, j, width)].vy + 2 * particles[coords2index(i - 1, j, width)].vy + particles[coords2index(i - 1, j, width)].vy) / (dx * dx);
-                    float vyyy = (particles[coords2index(i, j + 1, width)].vy - 2 * particles[coords2index(i, j, width)].vy + 2 * particles[coords2index(i, j - 1, width)].vy + particles[coords2index(i, j - 1, width)].vy) / (dx * dx);
-
-                    float change = delta * (-(vx * vxx + vy * vxy) + (vxxx + vxyy)*viscosity);
-                    if(change > max_change){
-                        max_change = change;
-                    }
-
-                    vx = vx + delta * (-(vx * vxx + vy * vxy) + (vxxx + vxyy)*viscosity);
-                    vy = vy + delta * (-(vx * vyx + vy * vyy) + (vyxx + vyyy)*viscosity);
+                    vx = vx + delta * (-(vx * vxx + vy * vxy));
+                    vy = vy + delta * (-(vx * vyx + vy * vyy));
 
                     newParticles[coords2index(i, j, width)].vx = vx;
                     newParticles[coords2index(i, j, width)].vy = vy;
 
                 }
             }
-
-            printf("%f\n", max_change);
 
             delete particles;
             particles = newParticles;
@@ -118,8 +152,8 @@ void drawParticles(sf::RenderTexture& window, Fluid& f){
 
 int main(int args, char** argv){
 
-    float WIDTH = 20;
-    float HEIGHT = 20;
+    float WIDTH = 50;
+    float HEIGHT = 50;
 
     float WINDOW_WIDTH = 1000;
     float WINDOW_HEIGHT = 1000;
@@ -135,7 +169,7 @@ int main(int args, char** argv){
             f.particles[coords2index(i, j, f.width)].vy = 0;
             f.particles[coords2index(i, j, f.width)].p = 0;
 
-            if(i >= 7 && i <= 13 && j >= 7 && j <= 13){
+            if(i >= 20 && i <= 30 && j >= 20 && j <= 30){
                 f.particles[coords2index(i, j, f.width)].vx = 1;
             }
         }
@@ -150,7 +184,7 @@ int main(int args, char** argv){
     sf::Vector2f scale(WINDOW_WIDTH / WIDTH, WINDOW_HEIGHT / HEIGHT);
 
     for(int i = 0; i < 100000; i++){
-        f.physics(0.0001);
+        f.physics(0.001);
         drawParticles(texture, f);
         window.clear();
         sf::Sprite sprite(texture.getTexture());
