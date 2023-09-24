@@ -88,8 +88,8 @@ class Fluid {
 
         }
 
-        void advect(float delta){
-                        Particle* newParticles = new Particle[width * height];
+        void advect_old(float delta){
+            Particle* newParticles = new Particle[width * height];
 
             for(uint i = 1; i < width - 1; i++){
                 for(uint j = 1; j < height - 1; j++){
@@ -114,6 +114,44 @@ class Fluid {
                 }
             }
 
+            delete particles;
+            particles = newParticles;
+
+        }
+
+        void advect(float delta){
+            Particle* newParticles = new Particle[width * height];
+
+            for(uint k = 0; k < 20; k++){
+                for(uint i = 1; i < width - 1; i++){
+                    for(uint j = 1; j < height - 1; j++){
+                        Particle& p = newParticles[coords2index(i, j, width)];
+                        Particle& p0 = particles[coords2index(i, j, width)];
+
+                        Particle& p1 = newParticles[coords2index(i + 1, j, width)];
+                        Particle& p2 = newParticles[coords2index(i - 1, j, width)];
+
+                        Particle& p3 = newParticles[coords2index(i, j + 1, width)];
+                        Particle& p4 = newParticles[coords2index(i, j - 1, width)];
+
+                        float vx = p0.vx;
+                        float vy = p0.vy;
+
+                        float vxx = (p1.vx - p2.vx) / (2 * dx);
+                        float vxy = (p3.vx - p4.vx) / (2 * dx);
+
+                        float vyy = (p3.vy - p4.vy) / (2 * dx);
+                        float vyx = (p1.vy - p2.vy) / (2 * dx);
+                        
+                        vx = (vx - delta*p.vy*vxy)/ (1 + delta*vxx);
+                        vy = (vy - delta*p.vx*vyx)/ (1 + delta*vyy);
+
+                        newParticles[coords2index(i, j, width)].vx = vx;
+                        newParticles[coords2index(i, j, width)].vy = vy;
+
+                    }
+                }
+            }
             delete particles;
             particles = newParticles;
 
@@ -186,7 +224,7 @@ int main(int args, char** argv){
     sf::Vector2f scale(WINDOW_WIDTH / WIDTH, WINDOW_HEIGHT / HEIGHT);
 
     for(int i = 0; i < 100000; i++){
-        f.physics(0.001);
+        f.physics(0.01);
         drawParticles(texture, f);
         window.clear();
         sf::Sprite sprite(texture.getTexture());
