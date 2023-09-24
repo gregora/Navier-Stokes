@@ -246,8 +246,18 @@ void drawParticles(sf::RenderTexture& window, Fluid& f, int block_size = 20){
                 speed = 255;
             }
 
+            float p_color = 125 + 30 * p.p;
+
+            if(p_color < 0){
+                p_color = 0;
+            }
+
+            if(p_color > 255){
+                p_color = 255;
+            }
+
             rect.setPosition((j) * block_size, (i) * block_size);
-            rect.setFillColor(sf::Color(speed, speed, speed));
+            rect.setFillColor(sf::Color(p_color, p_color, p_color));
             window.draw(rect);
 
             float ang = atan2(p.vy, p.vx);
