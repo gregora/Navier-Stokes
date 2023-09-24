@@ -88,13 +88,8 @@ class Fluid {
 
         }
 
-        void physics(float delta){
-
-            diffuse(delta);
-
-            Particle* newParticles = new Particle[width * height];
-
-            float viscosity = 0.1;
+        void advect(float delta){
+                        Particle* newParticles = new Particle[width * height];
 
             for(uint i = 1; i < width - 1; i++){
                 for(uint j = 1; j < height - 1; j++){
@@ -121,6 +116,13 @@ class Fluid {
 
             delete particles;
             particles = newParticles;
+
+        }
+
+        void physics(float delta){
+
+            diffuse(delta);
+            advect(delta);
 
         }
 
