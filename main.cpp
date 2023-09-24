@@ -5,12 +5,14 @@
 #include "math.h"
 #include <thread>
 #include <chrono>
+#include "Arrow.h"
 
 struct Particle {
 
     float vx = 0;
     float vy = 0;
     
+    float div = 0;
     float p = 0;
 
 };
@@ -157,19 +159,82 @@ class Fluid {
 
         }
 
+
+        void incompressibility(float delta){
+
+            float h = 1.0f / width;
+
+            for(uint i = 1; i < width - 1; i++){
+                for(uint j = 1; j < height - 1; j++){
+
+                    Particle& p = particles[coords2index(i, j, width)];
+
+                    Particle& p1 = particles[coords2index(i + 1, j, width)];
+                    Particle& p2 = particles[coords2index(i - 1, j, width)];
+
+                    Particle& p3 = particles[coords2index(i, j + 1, width)];
+                    Particle& p4 = particles[coords2index(i, j - 1, width)];
+
+                    float div = - (p1.vx - p2.vx + p3.vy - p4.vy) / (2 * dx);
+
+                    p.div = div;
+                    p.p = 0;
+
+                }
+            }
+
+            for(uint k = 0; k < 20; k++){
+                for(uint i = 1; i < width - 1; i++){
+                    for(uint j = 1; j < height - 1; j++){
+                        Particle& p = particles[coords2index(i, j, width)];
+
+                        Particle& p1 = particles[coords2index(i + 1, j, width)];
+                        Particle& p2 = particles[coords2index(i - 1, j, width)];
+
+                        Particle& p3 = particles[coords2index(i, j + 1, width)];
+                        Particle& p4 = particles[coords2index(i, j - 1, width)];
+
+                        p.p = (p1.p + p2.p + p3.p + p4.p + p.div) / 4;
+                    }
+                }
+            }
+
+
+            for(uint i = 1; i < width - 1; i++){
+                for(uint j = 1; j < height - 1; j++){
+                    Particle& p = particles[coords2index(i, j, width)];
+
+                    Particle& p1 = particles[coords2index(i + 1, j, width)];
+                    Particle& p2 = particles[coords2index(i - 1, j, width)];
+
+                    Particle& p3 = particles[coords2index(i, j + 1, width)];
+                    Particle& p4 = particles[coords2index(i, j - 1, width)];
+
+                    //printf("%f\n", delta*(p1.p - p2.p) / (2 * dx));
+                    //printf("%f\n", delta*(p3.p - p4.p) / (2 * dx));
+
+                    p.vx = p.vx - delta*(p1.p - p2.p) / (2 * dx);
+                    p.vy = p.vy - delta*(p3.p - p4.p) / (2 * dx);
+                }
+            }
+
+        }
+
         void physics(float delta){
 
             diffuse(delta);
             advect(delta);
+            incompressibility(delta);
 
         }
 
 };
 
 
-void drawParticles(sf::RenderTexture& window, Fluid& f){
+void drawParticles(sf::RenderTexture& window, Fluid& f, int block_size = 20){
 
-    sf::RectangleShape rect(sf::Vector2f(1, 1));
+    sf::RectangleShape rect(sf::Vector2f(block_size, block_size));
+    Arrow arrow;
 
     for(int i = 0; i < f.width; i++){
         for(int j = 0; j < f.height; j++){
@@ -181,10 +246,21 @@ void drawParticles(sf::RenderTexture& window, Fluid& f){
                 speed = 255;
             }
 
-            rect.setPosition(i, j);
+            rect.setPosition((j) * block_size, (i) * block_size);
             rect.setFillColor(sf::Color(speed, speed, speed));
-
             window.draw(rect);
+
+            float ang = atan2(p.vy, p.vx);
+
+            arrow.setPosition((j) * block_size + block_size/2, (i) * block_size + block_size/2);
+            ang = 180 - ang * 180 / M_PI;
+            arrow.setRotation(ang);
+            if(speed > 100){
+                speed = 100;
+            }
+            arrow.setScale(speed / 100, speed / 100);
+            window.draw(arrow);
+
         }
     }
 
@@ -218,17 +294,15 @@ int main(int args, char** argv){
 
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Fluid Simulation");
     sf::RenderTexture texture;
-    texture.create(WIDTH, HEIGHT);
+    texture.create(WINDOW_WIDTH, WINDOW_HEIGHT);
     texture.setSmooth(true);
 
-    sf::Vector2f scale(WINDOW_WIDTH / WIDTH, WINDOW_HEIGHT / HEIGHT);
 
     for(int i = 0; i < 100000; i++){
-        f.physics(0.01);
-        drawParticles(texture, f);
+        f.physics(0.001);
+        drawParticles(texture, f, 20);
         window.clear();
         sf::Sprite sprite(texture.getTexture());
-        sprite.setScale(scale);
         window.draw(sprite);
         window.display();
     }
