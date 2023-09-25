@@ -19,9 +19,14 @@ int main(int args, char** argv){
     float delta = 0.04;
 
     bool render = false;
+    bool render_energy = false;
     for(int i = 0; i < args; i++){
         if(strcmp(argv[i], "-render") == 0){
             render = true;
+        }
+
+        if(strcmp(argv[i], "-energy") == 0){
+            render_energy = true;
         }
     }
 
@@ -60,7 +65,7 @@ int main(int args, char** argv){
         auto end = std::chrono::high_resolution_clock::now();
 
         window.clear();
-        drawParticles(window, f, 10, true);
+        drawParticles(window, f, 10, render_energy);
         window.display();
 
         if(render){
