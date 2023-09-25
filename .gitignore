@@ -33,3 +33,6 @@
 
 # Render files
 render/*
+
+# Vscode files
+.vscode/*
