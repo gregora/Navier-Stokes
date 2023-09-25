@@ -75,8 +75,8 @@ class Fluid {
                         vy = vy + delta * ((vyxx + vyyy)*viscosity);
                         */
                         float a = (delta * viscosity) / (dx * dx);
-                        vx = p0.vx + a * (p1.vx + p2.vx + p3.vx + p4.vx) / (1 + 4 * a);
-                        vy = p0.vy + a * (p1.vy + p2.vy + p3.vy + p4.vy) / (1 + 4 * a);
+                        vx = (p0.vx + a * (p1.vx + p2.vx + p3.vx + p4.vx)) / (1 + 4 * a);
+                        vy = (p0.vy + a * (p1.vy + p2.vy + p3.vy + p4.vy)) / (1 + 4 * a);
 
                         newParticles[coords2index(i, j, width)].vx = vx;
                         newParticles[coords2index(i, j, width)].vy = vy;
@@ -222,17 +222,29 @@ class Fluid {
 
         void physics(float delta){
 
+            advect(delta);
+            //incompressibility(delta);
             diffuse(delta);
             incompressibility(delta);
-            advect(delta);
-            incompressibility(delta);
 
+        }
+
+        float energy(){
+            float eng = 0;
+            for(uint i = 1; i < width - 1; i++){
+                for(uint j = 1; j < height - 1; j++){
+                    Particle& p = particles[coords2index(i, j, width)];
+                    eng += sqrt(p.vx*p.vx + p.vy*p.vy);
+                }
+            }
+
+            return eng;
         }
 
 };
 
 
-void drawParticles(sf::RenderTexture& window, Fluid& f, int block_size = 20){
+void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size = 20, bool render_energy = true){
 
     sf::RectangleShape rect(sf::Vector2f(block_size, block_size));
     Arrow arrow;
@@ -241,26 +253,26 @@ void drawParticles(sf::RenderTexture& window, Fluid& f, int block_size = 20){
         for(int j = 0; j < f.height; j++){
             Particle& p = f.particles[coords2index(i, j, f.width)];
 
-            float speed = 25*sqrt(p.vx * p.vx + p.vy * p.vy);
+            float speed = 100*sqrt(p.vx * p.vx + p.vy * p.vy);
 
             if(speed > 255){
                 speed = 255;
             }
 
-            float p_color = 125 + 5*p.p;
+            float p_color = 125 + 50*p.p;
 
             if(p_color > 255){
                 p_color = 255;
             }
 
-            rect.setPosition((j) * block_size, (i) * block_size);
+            rect.setPosition(i * block_size, j * block_size);
             rect.setFillColor(sf::Color(p_color, p_color, p_color));
             window.draw(rect);
 
             float ang = atan2(p.vy, p.vx);
 
-            arrow.setPosition((j) * block_size + block_size/2, (i) * block_size + block_size/2);
-            ang = 180 - ang * 180 / M_PI;
+            arrow.setPosition(i * block_size + block_size/2, j * block_size + block_size/2);
+            ang = 90 + ang * 180 / M_PI;
             arrow.setRotation(ang);
             if(speed > 100){
                 speed = 100;
@@ -269,6 +281,26 @@ void drawParticles(sf::RenderTexture& window, Fluid& f, int block_size = 20){
             window.draw(arrow);
 
         }
+    }
+
+
+    if(render_energy){
+        //total energy as text
+        float eng = f.energy();
+
+        sf::Font font;
+        font.loadFromFile("fonts/Prototype.ttf");
+
+        sf::Text text;
+        text.setFont(font);
+        text.setString("Total energy: " + std::to_string((int) eng));
+
+        text.setCharacterSize(24);
+        text.setFillColor(sf::Color::Black);
+        text.setStyle(sf::Text::Bold);
+        text.setPosition(10, 10);
+
+        window.draw(text);
     }
 
 }
@@ -293,24 +325,19 @@ int main(int args, char** argv){
             f.particles[coords2index(i, j, f.width)].p = 0;
 
             if(i >= 10 && i <= 20 && j >= 45 && j <= 55){
-                f.particles[coords2index(i, j, f.width)].vx = 1;
+                f.particles[coords2index(i, j, f.width)].vx = 5;
             }
         }
     }
 
 
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Fluid Simulation");
-    sf::RenderTexture texture;
-    texture.create(WINDOW_WIDTH, WINDOW_HEIGHT);
-    texture.setSmooth(true);
 
 
     for(int i = 0; i < 100000; i++){
         f.physics(0.1);
-        drawParticles(texture, f, 10);
         window.clear();
-        sf::Sprite sprite(texture.getTexture());
-        window.draw(sprite);
+        drawParticles(window, f, 10);
         window.display();
     }
 
