@@ -216,8 +216,8 @@ void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool rend
         for(int j = 0; j < f.height; j++){
             Particle& p = f.particles[coords2index(i, j, f.width)];
 
-            float speed = 100*sqrt(p.vx * p.vx + p.vy * p.vy);
-
+            float speed = 50*sqrt(p.vx * p.vx + p.vy * p.vy);
+            
             if(speed > 255){
                 speed = 255;
             }
@@ -228,6 +228,12 @@ void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool rend
                 p_color = 255;
             }
 
+            if (p_color < 0)
+            {
+                p_color = 0;
+            }
+            
+
             rect.setPosition(i * block_size, j * block_size);
             rect.setFillColor(sf::Color(p_color, p_color, p_color));
             window.draw(rect);
@@ -237,11 +243,11 @@ void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool rend
             arrow.setPosition(i * block_size + block_size/2, j * block_size + block_size/2);
             ang = 90 + ang * 180 / M_PI;
             arrow.setRotation(ang);
+            arrow.setOpacity(speed);
             if(speed > 100){
                 speed = 100;
             }
             arrow.setScale(speed / 100, speed / 100);
-            arrow.setOpacity(speed);
             window.draw(arrow);
 
         }
