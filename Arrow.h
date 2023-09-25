@@ -18,6 +18,8 @@ class Arrow : public sf::Transformable, public sf::Drawable {
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 	private:
+		sf::Color color;
+		uint8_t r, g, b = 255;
         sf::RectangleShape line;
         sf::CircleShape head;
 };

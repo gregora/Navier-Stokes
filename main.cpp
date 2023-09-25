@@ -16,7 +16,7 @@ int main(int args, char** argv){
     float WINDOW_WIDTH = 1000;
     float WINDOW_HEIGHT = 1000;
 
-    float delta = 0.01;
+    float delta = 0.02;
 
     bool render = false;
     for(int i = 0; i < args; i++){
