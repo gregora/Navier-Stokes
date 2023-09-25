@@ -16,7 +16,7 @@ int main(int args, char** argv){
     float WINDOW_WIDTH = 1000;
     float WINDOW_HEIGHT = 1000;
 
-    float delta = 0.02;
+    float delta = 0.04;
 
     bool render = false;
     for(int i = 0; i < args; i++){
@@ -26,6 +26,7 @@ int main(int args, char** argv){
     }
 
     Fluid f(WIDTH, HEIGHT, 1);
+    f.gs_iters = 20;
 
 
     for(int i = 0; i < WIDTH; i++){
@@ -36,12 +37,12 @@ int main(int args, char** argv){
             f.particles[coords2index(i, j, f.width)].vy = 0;
             f.particles[coords2index(i, j, f.width)].p = 0;
 
-            if(i >= 10 && i <= 20 && j >= 28 && j <= 32){
-                f.particles[coords2index(i, j, f.width)].vx = 5;
+            if(i >= 10 && i <= 20 && j >= 40 && j <= 44){
+                f.particles[coords2index(i, j, f.width)].vx = 10;
             }
 
             if(j >= 10 && j <= 20 && i >= 28 && i <= 32){
-                f.particles[coords2index(i, j, f.width)].vy = 5;
+                f.particles[coords2index(i, j, f.width)].vy = 20;
             }
 
         }
@@ -51,10 +52,15 @@ int main(int args, char** argv){
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Fluid Simulation");
 
 
-    for(int i = 0; i < 2000; i++){
+    for(int i = 0; i < 500; i++){
+        //time physics with chrono
+
+        auto start = std::chrono::high_resolution_clock::now();
         f.physics(delta);
+        auto end = std::chrono::high_resolution_clock::now();
+
         window.clear();
-        drawParticles(window, f, 10, false);
+        drawParticles(window, f, 10, true);
         window.display();
 
         if(render){

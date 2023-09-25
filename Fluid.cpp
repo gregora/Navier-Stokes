@@ -129,7 +129,7 @@ void Fluid::incompressibility(float delta){
                 Particle& p3 = particles[coords2index(i, j + 1, width)];
                 Particle& p4 = particles[coords2index(i, j - 1, width)];
 
-                p.p = (p1.p + p2.p + p3.p + p4.p - p.div) / (4 * dx * dx);
+                p.p = (p1.p + p2.p + p3.p + p4.p - p.div * dx * dx / delta) / 4;
             }
         }
     }
@@ -145,9 +145,6 @@ void Fluid::incompressibility(float delta){
             Particle& p3 = particles[coords2index(i, j + 1, width)];
             Particle& p4 = particles[coords2index(i, j - 1, width)];
 
-            //printf("%f\n", delta*(p1.p - p2.p) / (2 * dx));
-            //printf("%f\n", delta*(p3.p - p4.p) / (2 * dx));
-
             p.vx = p.vx - delta*(p1.p - p2.p) / (2 * dx);
             p.vy = p.vy - delta*(p3.p - p4.p) / (2 * dx);
         }
@@ -158,7 +155,7 @@ void Fluid::incompressibility(float delta){
 void Fluid::physics(float delta){
 
     advect(delta);
-    //incompressibility(delta); //improves stability
+    //incompressibility(delta);
     diffuse(delta);
     incompressibility(delta);
 
@@ -169,7 +166,7 @@ float Fluid::energy(){
     for(uint i = 1; i < width - 1; i++){
         for(uint j = 1; j < height - 1; j++){
             Particle& p = particles[coords2index(i, j, width)];
-            eng += sqrt(p.vx*p.vx + p.vy*p.vy);
+            eng += p.vx*p.vx + p.vy*p.vy;
         }
     }
 
