@@ -188,7 +188,7 @@ void Fluid::incompressibility(float delta){
 void Fluid::physics(float delta){
 
     advect(delta);
-    incompressibility(delta);
+    //incompressibility(delta); //improves stability
     diffuse(delta);
     incompressibility(delta);
 
