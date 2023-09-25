@@ -13,6 +13,11 @@ Arrow::Arrow() {
     head.setPosition(1, -5);
 }
 
+void Arrow::setOpacity(uint8_t opacity){
+    line.setFillColor(sf::Color(255, 0, 0, opacity));
+    head.setFillColor(sf::Color(255, 0, 0, opacity));
+}
+
 void Arrow::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     states.transform *= getTransform();
 

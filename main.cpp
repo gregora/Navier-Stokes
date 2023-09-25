@@ -62,18 +62,7 @@ class Fluid {
 
                         float vx = p.vx;
                         float vy = p.vy;
-
                         
-                        /*
-                        float vxxx = (particles[coords2index(i + 1, j, width)].vx - 2 * particles[coords2index(i + 1, j, width)].vx + 2 * particles[coords2index(i, j, width)].vx + particles[coords2index(i - 1, j, width)].vx) / (dx * dx);
-                        float vxyy = (particles[coords2index(i, j + 1, width)].vx - 2 * particles[coords2index(i, j, width)].vx + 2 * particles[coords2index(i, j - 1, width)].vx + particles[coords2index(i, j - 1, width)].vx) / (dx * dx);
-
-                        float vyxx = (particles[coords2index(i + 1, j, width)].vy - 2 * particles[coords2index(i, j, width)].vy + 2 * particles[coords2index(i - 1, j, width)].vy + particles[coords2index(i - 1, j, width)].vy) / (dx * dx);
-                        float vyyy = (particles[coords2index(i, j + 1, width)].vy - 2 * particles[coords2index(i, j, width)].vy + 2 * particles[coords2index(i, j - 1, width)].vy + particles[coords2index(i, j - 1, width)].vy) / (dx * dx);
-
-                        vx = vx + delta * ((vxxx + vxyy)*viscosity);
-                        vy = vy + delta * ((vyxx + vyyy)*viscosity);
-                        */
                         float a = (delta * viscosity) / (dx * dx);
                         vx = (p0.vx + a * (p1.vx + p2.vx + p3.vx + p4.vx)) / (1 + 4 * a);
                         vy = (p0.vy + a * (p1.vy + p2.vy + p3.vy + p4.vy)) / (1 + 4 * a);
@@ -223,7 +212,7 @@ class Fluid {
         void physics(float delta){
 
             advect(delta);
-            //incompressibility(delta);
+            incompressibility(delta);
             diffuse(delta);
             incompressibility(delta);
 
@@ -278,6 +267,7 @@ void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size = 20, bool
                 speed = 100;
             }
             arrow.setScale(speed / 100, speed / 100);
+            arrow.setOpacity(speed);
             window.draw(arrow);
 
         }

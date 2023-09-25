@@ -13,6 +13,8 @@ class Arrow : public sf::Transformable, public sf::Drawable {
 
 		Arrow();
 
+        void setOpacity(uint8_t opacity);
+
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 	private:
