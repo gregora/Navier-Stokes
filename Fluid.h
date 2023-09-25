@@ -35,8 +35,6 @@ class Fluid {
 
         void diffuse(float delta, float viscosity = 0.1);
 
-        void advect_old(float delta);
-
         void advect(float delta);
 
         void incompressibility(float delta);

@@ -55,36 +55,6 @@ void Fluid::diffuse(float delta, float viscosity){
 
 }
 
-void Fluid::advect_old(float delta){
-    Particle* newParticles = new Particle[width * height];
-
-    for(uint i = 1; i < width - 1; i++){
-        for(uint j = 1; j < height - 1; j++){
-            Particle& p = particles[coords2index(i, j, width)];
-
-
-            float vx = p.vx;
-            float vy = p.vy;
-            
-            float vxx = (particles[coords2index(i + 1, j, width)].vx - particles[coords2index(i - 1, j, width)].vx) / (2 * dx);
-            float vxy = (particles[coords2index(i, j + 1, width)].vx - particles[coords2index(i, j - 1, width)].vx) / (2 * dx);
-
-            float vyy = (particles[coords2index(i, j + 1, width)].vy - particles[coords2index(i, j - 1, width)].vy) / (2 * dx);
-            float vyx = (particles[coords2index(i + 1, j, width)].vy - particles[coords2index(i - 1, j, width)].vy) / (2 * dx);
-
-            vx = vx + delta * (-(vx * vxx + vy * vxy));
-            vy = vy + delta * (-(vx * vyx + vy * vyy));
-
-            newParticles[coords2index(i, j, width)].vx = vx;
-            newParticles[coords2index(i, j, width)].vy = vy;
-
-        }
-    }
-
-    delete particles;
-    particles = newParticles;
-
-}
 
 void Fluid::advect(float delta){
     Particle* newParticles = new Particle[width * height];
