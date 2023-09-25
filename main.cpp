@@ -175,7 +175,7 @@ class Fluid {
                     Particle& p3 = particles[coords2index(i, j + 1, width)];
                     Particle& p4 = particles[coords2index(i, j - 1, width)];
 
-                    float div = - (p1.vx - p2.vx + p3.vy - p4.vy) / (2 * dx);
+                    float div = (p1.vx - p2.vx + p3.vy - p4.vy) / (2 * dx);
 
                     p.div = div;
                     p.p = 0;
@@ -194,7 +194,7 @@ class Fluid {
                         Particle& p3 = particles[coords2index(i, j + 1, width)];
                         Particle& p4 = particles[coords2index(i, j - 1, width)];
 
-                        p.p = (p1.p + p2.p + p3.p + p4.p + p.div) / 4;
+                        p.p = (p1.p + p2.p + p3.p + p4.p - p.div) / (4 * dx * dx);
                     }
                 }
             }
@@ -223,6 +223,7 @@ class Fluid {
         void physics(float delta){
 
             diffuse(delta);
+            incompressibility(delta);
             advect(delta);
             incompressibility(delta);
 
@@ -240,17 +241,13 @@ void drawParticles(sf::RenderTexture& window, Fluid& f, int block_size = 20){
         for(int j = 0; j < f.height; j++){
             Particle& p = f.particles[coords2index(i, j, f.width)];
 
-            float speed = 100*sqrt(p.vx * p.vx + p.vy * p.vy);
+            float speed = 25*sqrt(p.vx * p.vx + p.vy * p.vy);
 
             if(speed > 255){
                 speed = 255;
             }
 
-            float p_color = 125 + 30 * p.p;
-
-            if(p_color < 0){
-                p_color = 0;
-            }
+            float p_color = 125 + 5*p.p;
 
             if(p_color > 255){
                 p_color = 255;
@@ -278,8 +275,8 @@ void drawParticles(sf::RenderTexture& window, Fluid& f, int block_size = 20){
 
 int main(int args, char** argv){
 
-    float WIDTH = 50;
-    float HEIGHT = 50;
+    float WIDTH = 100;
+    float HEIGHT = 100;
 
     float WINDOW_WIDTH = 1000;
     float WINDOW_HEIGHT = 1000;
@@ -295,7 +292,7 @@ int main(int args, char** argv){
             f.particles[coords2index(i, j, f.width)].vy = 0;
             f.particles[coords2index(i, j, f.width)].p = 0;
 
-            if(i >= 20 && i <= 30 && j >= 20 && j <= 30){
+            if(i >= 10 && i <= 20 && j >= 45 && j <= 55){
                 f.particles[coords2index(i, j, f.width)].vx = 1;
             }
         }
@@ -309,8 +306,8 @@ int main(int args, char** argv){
 
 
     for(int i = 0; i < 100000; i++){
-        f.physics(0.001);
-        drawParticles(texture, f, 20);
+        f.physics(0.1);
+        drawParticles(texture, f, 10);
         window.clear();
         sf::Sprite sprite(texture.getTexture());
         window.draw(sprite);
