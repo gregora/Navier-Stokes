@@ -24,7 +24,7 @@ Fluid::Fluid(uint width, uint height, float dx){
 void Fluid::diffuse(float delta, float viscosity){
     Particle* newParticles = new Particle[width * height];
 
-    for(uint k = 0; k < 20; k++){
+    for(uint k = 0; k < gs_iters; k++){
         for(uint i = 1; i < width - 1; i++){
             for(uint j = 1; j < height - 1; j++){
                 
@@ -59,7 +59,7 @@ void Fluid::diffuse(float delta, float viscosity){
 void Fluid::advect(float delta){
     Particle* newParticles = new Particle[width * height];
 
-    for(uint k = 0; k < 20; k++){
+    for(uint k = 0; k < gs_iters; k++){
         for(uint i = 1; i < width - 1; i++){
             for(uint j = 1; j < height - 1; j++){
                 Particle& p = newParticles[coords2index(i, j, width)];
@@ -118,7 +118,7 @@ void Fluid::incompressibility(float delta){
         }
     }
 
-    for(uint k = 0; k < 20; k++){
+    for(uint k = 0; k < gs_iters; k++){
         for(uint i = 1; i < width - 1; i++){
             for(uint j = 1; j < height - 1; j++){
                 Particle& p = particles[coords2index(i, j, width)];

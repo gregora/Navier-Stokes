@@ -27,6 +27,8 @@ class Fluid {
         uint width;
         uint height;
         float dx;
+        
+        uint gs_iters = 20; // Number of Gauss-Seidel iterations
 
         Particle* particles;
 
