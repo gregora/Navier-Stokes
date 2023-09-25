@@ -259,7 +259,7 @@ void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool rend
         text.setFont(font);
         text.setString("Total energy: " + std::to_string((int) eng));
 
-        text.setCharacterSize(24);
+        text.setCharacterSize(18);
         text.setFillColor(sf::Color::Black);
         text.setStyle(sf::Text::Bold);
         text.setPosition(10, 10);
