@@ -20,6 +20,7 @@ int main(int args, char** argv){
 
     bool render = false;
     bool render_energy = false;
+    bool render_velocities = false;
     for(int i = 0; i < args; i++){
         if(strcmp(argv[i], "-render") == 0){
             render = true;
@@ -27,6 +28,10 @@ int main(int args, char** argv){
 
         if(strcmp(argv[i], "-energy") == 0){
             render_energy = true;
+        }
+
+        if(strcmp(argv[i], "-velocities") == 0){
+            render_velocities = true;
         }
     }
 
@@ -44,10 +49,12 @@ int main(int args, char** argv){
 
             if(i >= 10 && i <= 20 && j >= 40 && j <= 44){
                 f.particles[coords2index(i, j, f.width)].Fx = 10;
+                f.particles[coords2index(i, j, f.width)].smoke = 1;
             }
 
             if(j >= 10 && j <= 20 && i >= 28 && i <= 32){
                 f.particles[coords2index(i, j, f.width)].Fy = 20;
+                f.particles[coords2index(i, j, f.width)].smoke = 1;
             }
 
         }
@@ -57,7 +64,7 @@ int main(int args, char** argv){
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Fluid Simulation");
 
 
-    for(int i = 0; i < 300; i++){
+    for(int i = 0; i < 600; i++){
         //time physics with chrono
 
         auto start = std::chrono::high_resolution_clock::now();
@@ -65,7 +72,7 @@ int main(int args, char** argv){
         auto end = std::chrono::high_resolution_clock::now();
 
         window.clear();
-        drawParticles(window, f, 10, render_energy);
+        drawParticles(window, f, 10, render_energy, render_velocities);
         window.display();
 
         if(render){

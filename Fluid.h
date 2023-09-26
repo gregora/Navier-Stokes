@@ -24,6 +24,9 @@ class Particle {
         float Fx = 0;
         float Fy = 0;
 
+        //smoke density field
+        float smoke = 0;
+
 };
 
 int coords2index(int x, int y, int width);
@@ -57,4 +60,4 @@ class Fluid {
 };
 
 
-void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size = 20, bool render_energy = true);
+void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size = 20, bool render_energy = true, bool render_velocities = true);

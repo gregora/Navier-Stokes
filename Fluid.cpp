@@ -39,12 +39,16 @@ void Fluid::diffuse(float delta, float viscosity){
                 float vx = p.vx;
                 float vy = p.vy;
 
+                float smoke = p0.smoke;
+
                 float a = (delta * viscosity) / (dx * dx);
                 vx = (p0.vx + a * (p1.vx + p2.vx + p3.vx + p4.vx)) / (1 + 4 * a);
                 vy = (p0.vy + a * (p1.vy + p2.vy + p3.vy + p4.vy)) / (1 + 4 * a);
+                smoke = (p0.smoke + a * (p1.smoke + p2.smoke + p3.smoke + p4.smoke)) / (1 + 4 * a);
 
                 p.vx = vx;
                 p.vy = vy;
+                p.smoke = smoke;
 
                 p.Fx = p0.Fx;
                 p.Fy = p0.Fy;
@@ -77,20 +81,31 @@ void Fluid::advect(float delta){
                 float vx = p0.vx;
                 float vy = p0.vy;
 
+                float smoke = p0.smoke;
+
                 float vxx = (p1.vx - p2.vx) / (2 * dx);
                 float vxy = (p3.vx - p4.vx) / (2 * dx);
 
                 float vyy = (p3.vy - p4.vy) / (2 * dx);
                 float vyx = (p1.vy - p2.vy) / (2 * dx);
+
+                float sx = (p1.smoke - p2.smoke) / (2 * dx);
+                float sy = (p3.smoke - p4.smoke) / (2 * dx);
                 
-                vx = (vx - delta*p.vy*vxy)/ (1 + delta*vxx);
-                vy = (vy - delta*p.vx*vyx)/ (1 + delta*vyy);
+                vx = (vx - delta*p.vy*vxy) / (1 + delta*vxx);
+                vy = (vy - delta*p.vx*vyx) / (1 + delta*vyy);
+
+                smoke = (smoke - delta*p.vx*sx - delta*p.vy*sy) / (1 + delta*(vxx + vyy));
+
+
 
                 p.vx = vx;
                 p.vy = vy;
 
                 p.Fx = p0.Fx;
                 p.Fy = p0.Fy;
+
+                p.smoke = smoke;
             }
         }
     }
@@ -193,7 +208,7 @@ float Fluid::energy(){
 }
 
 
-void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool render_energy){
+void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool render_energy, bool render_velocities){
 
     sf::RectangleShape rect(sf::Vector2f(block_size, block_size));
     Arrow arrow;
@@ -208,7 +223,8 @@ void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool rend
                 speed = 255;
             }
 
-            float p_color = 125 + 50*p.p;
+            //float p_color = 125 + 50*p.p;
+            float p_color = 255*p.smoke;
 
             if(p_color > 255){
                 p_color = 255;
@@ -229,7 +245,11 @@ void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool rend
             arrow.setPosition(i * block_size + block_size/2, j * block_size + block_size/2);
             ang = 90 + ang * 180 / M_PI;
             arrow.setRotation(ang);
-            arrow.setOpacity(speed);
+            if(render_velocities){
+                arrow.setOpacity(speed);
+            }else{
+                arrow.setOpacity(0);
+            }
             if(speed > 100){
                 speed = 100;
             }
