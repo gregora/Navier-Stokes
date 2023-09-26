@@ -9,20 +9,20 @@
 
 
 
-struct Particle {
+class Particle {
+    public:
+        //velocity field
+        float vx = 0;
+        float vy = 0;
+        
+        //divergence field
+        float div = 0;
+        //pressure field
+        float p = 0;
 
-    //velocity field
-    float vx = 0;
-    float vy = 0;
-    
-    //divergence field
-    float div = 0;
-    //pressure field
-    float p = 0;
-
-    //external forces field
-    float Fx = 0;
-    float Fy = 0;
+        //external forces field
+        float Fx = 0;
+        float Fy = 0;
 
 };
 
