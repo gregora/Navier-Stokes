@@ -11,10 +11,10 @@
 int main(int args, char** argv){
 
     float WIDTH = 100;
-    float HEIGHT = 100;
+    float HEIGHT = 70;
 
     float WINDOW_WIDTH = 1000;
-    float WINDOW_HEIGHT = 1000;
+    float WINDOW_HEIGHT = 700;
 
     float delta = 0.04;
 
@@ -43,11 +43,11 @@ int main(int args, char** argv){
             f.particles[coords2index(i, j, f.width)].p = 0;
 
             if(i >= 10 && i <= 20 && j >= 40 && j <= 44){
-                f.particles[coords2index(i, j, f.width)].vx = 10;
+                f.particles[coords2index(i, j, f.width)].Fx = 10;
             }
 
             if(j >= 10 && j <= 20 && i >= 28 && i <= 32){
-                f.particles[coords2index(i, j, f.width)].vy = 20;
+                f.particles[coords2index(i, j, f.width)].Fy = 20;
             }
 
         }
@@ -57,7 +57,7 @@ int main(int args, char** argv){
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Fluid Simulation");
 
 
-    for(int i = 0; i < 500; i++){
+    for(int i = 0; i < 300; i++){
         //time physics with chrono
 
         auto start = std::chrono::high_resolution_clock::now();
@@ -69,8 +69,22 @@ int main(int args, char** argv){
         window.display();
 
         if(render){
-            window.capture().saveToFile("render/" + std::to_string(i) + ".png");
+            sf::Image screenshot = window.capture();
+            
+            screenshot.saveToFile("render/" + std::to_string(i) + ".png");
             printf("Rendered frame %d at simulation time %fs\n", i, i*delta);
+        }
+
+        if(i > 25){
+            for(int i_ = 0; i_ < WIDTH; i_++){
+                for(int j = 0; j < HEIGHT; j++){
+               
+                    Particle& p = f.particles[coords2index(i_, j, f.width)];
+                    p.Fx = 0;
+                    p.Fy = 0;
+
+                }
+            }
         }
     }
 

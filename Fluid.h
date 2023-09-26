@@ -11,11 +11,18 @@
 
 struct Particle {
 
+    //velocity field
     float vx = 0;
     float vy = 0;
     
+    //divergence field
     float div = 0;
+    //pressure field
     float p = 0;
+
+    //external forces field
+    float Fx = 0;
+    float Fy = 0;
 
 };
 
@@ -38,6 +45,8 @@ class Fluid {
         void diffuse(float delta, float viscosity = 0.1);
 
         void advect(float delta);
+
+        void external_forces(float delta);
 
         void incompressibility(float delta);
 

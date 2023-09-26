@@ -43,8 +43,11 @@ void Fluid::diffuse(float delta, float viscosity){
                 vx = (p0.vx + a * (p1.vx + p2.vx + p3.vx + p4.vx)) / (1 + 4 * a);
                 vy = (p0.vy + a * (p1.vy + p2.vy + p3.vy + p4.vy)) / (1 + 4 * a);
 
-                newParticles[coords2index(i, j, width)].vx = vx;
-                newParticles[coords2index(i, j, width)].vy = vy;
+                p.vx = vx;
+                p.vy = vy;
+
+                p.Fx = p0.Fx;
+                p.Fy = p0.Fy;
 
             }
         }
@@ -83,15 +86,30 @@ void Fluid::advect(float delta){
                 vx = (vx - delta*p.vy*vxy)/ (1 + delta*vxx);
                 vy = (vy - delta*p.vx*vyx)/ (1 + delta*vyy);
 
-                newParticles[coords2index(i, j, width)].vx = vx;
-                newParticles[coords2index(i, j, width)].vy = vy;
+                p.vx = vx;
+                p.vy = vy;
 
+                p.Fx = p0.Fx;
+                p.Fy = p0.Fy;
             }
         }
     }
     delete particles;
     particles = newParticles;
 
+}
+
+
+void Fluid::external_forces(float delta){
+    
+    for(uint i = 1; i < width - 1; i++){
+        for(uint j = 1; j < height - 1; j++){
+            Particle& p = particles[coords2index(i, j, width)];
+
+            p.vx += delta * p.Fx;
+            p.vy += delta * p.Fy;
+        }
+    }
 }
 
 
@@ -154,6 +172,7 @@ void Fluid::incompressibility(float delta){
 
 void Fluid::physics(float delta){
 
+    external_forces(delta);
     advect(delta);
     //incompressibility(delta);
     diffuse(delta);
