@@ -94,7 +94,7 @@ int main(int args, char** argv){
             printf("Rendered frame %d at simulation time %fs\n", frame, frame*delta);
         }
 
-        if(frame > 1){
+        if(frame == 2){
             for(int i = 0; i < WIDTH; i++){
                 for(int j = 0; j < HEIGHT; j++){
                

@@ -48,41 +48,6 @@ void Fluid::diffuse_iteration(Particle* newParticles, float delta, float viscosi
     p.Fy = p0.Fy;
 }
 
-void Fluid::diffuse_sector(Particle* newParticles, float delta, float viscosity, uint start, uint end){
-
-    for(uint i = start; i < end; i++){
-
-        if(i == 0 || i == width - 1){
-            continue;
-        }
-
-        for(uint j = 1; j < height - 1; j++){
-            diffuse_iteration(newParticles, delta, viscosity, i, j);
-        }
-    }
-
-}
-
-
-void Fluid::diffuse(float delta, float viscosity){
-    Particle* newParticles = new Particle[width * height];
-
-    std::thread threads_array[threads];
-    for(uint k = 0; k < gs_iters; k++){       
-        for(uint t = 0; t < threads; t++){
-            threads_array[t] = std::thread(&Fluid::diffuse_sector, this, newParticles, delta, viscosity, t * width / threads, (t + 1) * width / threads);
-        }        
-
-        for(uint t = 0; t < threads; t++){
-            threads_array[t].join();
-        }
-
-    }
-
-    delete particles;
-    particles = newParticles;
-
-}
 
 
 void Fluid::advect_iteration(Particle* newParticles, float delta, uint i, uint j){
@@ -125,41 +90,6 @@ void Fluid::advect_iteration(Particle* newParticles, float delta, uint i, uint j
     p.smoke = smoke;
 }
 
-void Fluid::advect_sector(Particle* newParticles, float delta, uint start, uint end){
-
-    for(uint i = start; i < end; i++){
-
-        if(i == 0 || i == width - 1){
-            continue;
-        }
-
-        for(uint j = 1; j < height - 1; j++){
-            advect_iteration(newParticles, delta, i, j);
-        }
-    }
-
-}
-
-void Fluid::advect(float delta){
-    Particle* newParticles = new Particle[width * height];
-
-    std::thread threads_array[threads];
-
-    for(uint k = 0; k < gs_iters; k++){
-        for(uint t = 0; t < threads; t++){
-            threads_array[t] = std::thread(&Fluid::advect_sector, this, newParticles, delta, t * width / threads, (t + 1) * width / threads);
-        }
-
-        for(uint t = 0; t < threads; t++){
-            threads_array[t].join();
-        }
-    }
-
-    delete particles;
-    particles = newParticles;
-
-}
-
 
 void Fluid::external_forces(float delta){
     
@@ -184,23 +114,6 @@ void Fluid::pressure_iteration(float delta, uint i, uint j){
 
     p.p = (p1.p + p2.p + p3.p + p4.p - p.div * dx * dx / delta) / 4;
 }
-
-
-void Fluid::pressure_sector(float delta, uint start, uint end){
-
-    for(uint i = start; i < end; i++){
-
-        if(i == 0 || i == width - 1){
-            continue;
-        }
-
-        for(uint j = 1; j < height - 1; j++){
-            pressure_iteration(delta, i, j);
-        }
-    }
-
-}
-
 
 void Fluid::incompressibility(float delta){
 
@@ -354,6 +267,96 @@ void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool rend
         text.setPosition(10, 10);
 
         window.draw(text);
+    }
+
+}
+
+
+
+
+void Fluid::diffuse_sector(Particle* newParticles, float delta, float viscosity, uint start, uint end){
+
+    for(uint i = start; i < end; i++){
+
+        if(i == 0 || i == width - 1){
+            continue;
+        }
+
+        for(uint j = 1; j < height - 1; j++){
+            diffuse_iteration(newParticles, delta, viscosity, i, j);
+        }
+    }
+
+}
+
+
+void Fluid::diffuse(float delta, float viscosity){
+    Particle* newParticles = new Particle[width * height];
+
+    std::thread threads_array[threads];
+    for(uint k = 0; k < gs_iters; k++){       
+        for(uint t = 0; t < threads; t++){
+            threads_array[t] = std::thread(&Fluid::diffuse_sector, this, newParticles, delta, viscosity, t * width / threads, (t + 1) * width / threads);
+        }        
+
+        for(uint t = 0; t < threads; t++){
+            threads_array[t].join();
+        }
+
+    }
+
+    delete particles;
+    particles = newParticles;
+
+}
+
+
+void Fluid::advect_sector(Particle* newParticles, float delta, uint start, uint end){
+
+    for(uint i = start; i < end; i++){
+
+        if(i == 0 || i == width - 1){
+            continue;
+        }
+
+        for(uint j = 1; j < height - 1; j++){
+            advect_iteration(newParticles, delta, i, j);
+        }
+    }
+
+}
+
+void Fluid::advect(float delta){
+    Particle* newParticles = new Particle[width * height];
+
+    std::thread threads_array[threads];
+
+    for(uint k = 0; k < gs_iters; k++){
+        for(uint t = 0; t < threads; t++){
+            threads_array[t] = std::thread(&Fluid::advect_sector, this, newParticles, delta, t * width / threads, (t + 1) * width / threads);
+        }
+
+        for(uint t = 0; t < threads; t++){
+            threads_array[t].join();
+        }
+    }
+
+    delete particles;
+    particles = newParticles;
+
+}
+
+void Fluid::pressure_sector(float delta, uint start, uint end){
+
+    for(uint i = start; i < end; i++){
+
+        if(i == 0 || i == width - 1){
+            continue;
+        }
+
+        for(uint j = 1; j < height - 1; j++){
+            pressure_iteration(delta, i, j);
+        }
     }
 
 }
