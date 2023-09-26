@@ -18,6 +18,7 @@ int main(int args, char** argv){
 
     float simulation_time = 20;
     float delta = 0.02;
+    uint threads = 1;
 
     bool render = false;
     bool render_energy = false;
@@ -38,10 +39,16 @@ int main(int args, char** argv){
         if(strcmp(argv[i], "-time") == 0){
             simulation_time = atof(argv[i + 1]);
         }
+
+        if(strcmp(argv[i], "-threads") == 0){
+            threads = atoi(argv[i + 1]);
+        }
+
     }
 
     Fluid f(WIDTH, HEIGHT, 1);
     f.gs_iters = 20;
+    f.threads = threads;
 
 
     for(int i = 0; i < WIDTH; i++){

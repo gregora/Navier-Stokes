@@ -1,5 +1,6 @@
 #include "Fluid.h"
-
+#include <thread>
+#include <chrono>
 
 
 int coords2index(int x, int y, int width){
@@ -47,16 +48,35 @@ void Fluid::diffuse_iteration(Particle* newParticles, float delta, float viscosi
     p.Fy = p0.Fy;
 }
 
+void Fluid::diffuse_sector(Particle* newParticles, float delta, float viscosity, uint start, uint end){
+
+    for(uint i = start; i < end; i++){
+
+        if(i == 0 || i == width - 1){
+            continue;
+        }
+
+        for(uint j = 1; j < height - 1; j++){
+            diffuse_iteration(newParticles, delta, viscosity, i, j);
+        }
+    }
+
+}
+
 
 void Fluid::diffuse(float delta, float viscosity){
     Particle* newParticles = new Particle[width * height];
 
-    for(uint k = 0; k < gs_iters; k++){
-        for(uint i = 1; i < width - 1; i++){
-            for(uint j = 1; j < height - 1; j++){
-                diffuse_iteration(newParticles, delta, viscosity, i, j);
-            }
+    std::thread threads_array[threads];
+    for(uint k = 0; k < gs_iters; k++){       
+        for(uint t = 0; t < threads; t++){
+            threads_array[t] = std::thread(&Fluid::diffuse_sector, this, newParticles, delta, viscosity, t * width / threads, (t + 1) * width / threads);
+        }        
+
+        for(uint t = 0; t < threads; t++){
+            threads_array[t].join();
         }
+
     }
 
     delete particles;
@@ -105,16 +125,36 @@ void Fluid::advect_iteration(Particle* newParticles, float delta, uint i, uint j
     p.smoke = smoke;
 }
 
+void Fluid::advect_sector(Particle* newParticles, float delta, uint start, uint end){
+
+    for(uint i = start; i < end; i++){
+
+        if(i == 0 || i == width - 1){
+            continue;
+        }
+
+        for(uint j = 1; j < height - 1; j++){
+            advect_iteration(newParticles, delta, i, j);
+        }
+    }
+
+}
+
 void Fluid::advect(float delta){
     Particle* newParticles = new Particle[width * height];
 
+    std::thread threads_array[threads];
+
     for(uint k = 0; k < gs_iters; k++){
-        for(uint i = 1; i < width - 1; i++){
-            for(uint j = 1; j < height - 1; j++){
-                advect_iteration(newParticles, delta, i, j);
-            }
+        for(uint t = 0; t < threads; t++){
+            threads_array[t] = std::thread(&Fluid::advect_sector, this, newParticles, delta, t * width / threads, (t + 1) * width / threads);
+        }
+
+        for(uint t = 0; t < threads; t++){
+            threads_array[t].join();
         }
     }
+
     delete particles;
     particles = newParticles;
 
@@ -146,6 +186,22 @@ void Fluid::pressure_iteration(float delta, uint i, uint j){
 }
 
 
+void Fluid::pressure_sector(float delta, uint start, uint end){
+
+    for(uint i = start; i < end; i++){
+
+        if(i == 0 || i == width - 1){
+            continue;
+        }
+
+        for(uint j = 1; j < height - 1; j++){
+            pressure_iteration(delta, i, j);
+        }
+    }
+
+}
+
+
 void Fluid::incompressibility(float delta){
 
     float h = 1.0f / width;
@@ -170,11 +226,16 @@ void Fluid::incompressibility(float delta){
     }
 
     for(uint k = 0; k < gs_iters; k++){
-        for(uint i = 1; i < width - 1; i++){
-            for(uint j = 1; j < height - 1; j++){
-                pressure_iteration(delta, i, j);
-            }
+        std::thread threads_array[threads];
+
+        for(uint t = 0; t < threads; t++){
+            threads_array[t] = std::thread(&Fluid::pressure_sector, this, delta, t * width / threads, (t + 1) * width / threads);
         }
+
+        for(uint t = 0; t < threads; t++){
+            threads_array[t].join();
+        }
+
     }
 
 
@@ -197,12 +258,18 @@ void Fluid::incompressibility(float delta){
 
 void Fluid::physics(float delta){
 
+    //measure time of physics
+    auto start = std::chrono::high_resolution_clock::now();
+
     external_forces(delta);
     advect(delta);
-    //incompressibility(delta);
     diffuse(delta);
     incompressibility(delta);
 
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+
+    //printf("Physics time: %f\n", elapsed.count());
 }
 
 float Fluid::energy(){
