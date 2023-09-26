@@ -10,13 +10,14 @@
 
 int main(int args, char** argv){
 
-    float WIDTH = 100;
-    float HEIGHT = 70;
+    float WIDTH = 200;
+    float HEIGHT = 140;
 
     float WINDOW_WIDTH = 1000;
     float WINDOW_HEIGHT = 700;
 
-    float delta = 0.04;
+    float simulation_time = 20;
+    float delta = 0.02;
 
     bool render = false;
     bool render_energy = false;
@@ -33,6 +34,10 @@ int main(int args, char** argv){
         if(strcmp(argv[i], "-velocities") == 0){
             render_velocities = true;
         }
+
+        if(strcmp(argv[i], "-time") == 0){
+            simulation_time = atof(argv[i + 1]);
+        }
     }
 
     Fluid f(WIDTH, HEIGHT, 1);
@@ -47,13 +52,13 @@ int main(int args, char** argv){
             f.particles[coords2index(i, j, f.width)].vy = 0;
             f.particles[coords2index(i, j, f.width)].p = 0;
 
-            if(i >= 10 && i <= 20 && j >= 40 && j <= 44){
-                f.particles[coords2index(i, j, f.width)].Fx = 10;
+            if(i >= 20 && i <= 40 && j >= 80 && j <= 88){
+                f.particles[coords2index(i, j, f.width)].Fx = 100;
                 f.particles[coords2index(i, j, f.width)].smoke = 1;
             }
 
-            if(j >= 10 && j <= 20 && i >= 28 && i <= 32){
-                f.particles[coords2index(i, j, f.width)].Fy = 20;
+            if(j >= 20 && j <= 40 && i >= 56 && i <= 64){
+                f.particles[coords2index(i, j, f.width)].Fy = 200;
                 f.particles[coords2index(i, j, f.width)].smoke = 1;
             }
 
@@ -63,8 +68,8 @@ int main(int args, char** argv){
 
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Fluid Simulation");
 
-
-    for(int i = 0; i < 600; i++){
+    int frames = (int) (simulation_time / delta);
+    for(int frame = 0; frame < frames; frame++){
         //time physics with chrono
 
         auto start = std::chrono::high_resolution_clock::now();
@@ -72,21 +77,21 @@ int main(int args, char** argv){
         auto end = std::chrono::high_resolution_clock::now();
 
         window.clear();
-        drawParticles(window, f, 10, render_energy, render_velocities);
+        drawParticles(window, f, 5, render_energy, render_velocities);
         window.display();
 
         if(render){
             sf::Image screenshot = window.capture();
             
-            screenshot.saveToFile("render/" + std::to_string(i) + ".png");
-            printf("Rendered frame %d at simulation time %fs\n", i, i*delta);
+            screenshot.saveToFile("render/" + std::to_string(frame) + ".png");
+            printf("Rendered frame %d at simulation time %fs\n", frame, frame*delta);
         }
 
-        if(i > 25){
-            for(int i_ = 0; i_ < WIDTH; i_++){
+        if(frame > 1){
+            for(int i = 0; i < WIDTH; i++){
                 for(int j = 0; j < HEIGHT; j++){
                
-                    Particle& p = f.particles[coords2index(i_, j, f.width)];
+                    Particle& p = f.particles[coords2index(i, j, f.width)];
                     p.Fx = 0;
                     p.Fy = 0;
 
