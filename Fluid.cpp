@@ -20,6 +20,33 @@ Fluid::Fluid(uint width, uint height, float dx){
 
 }
 
+void Fluid::diffuse_iteration(Particle* newParticles, float delta, float viscosity, uint i, uint j){
+    Particle& p = newParticles[coords2index(i, j, width)];
+    Particle& p0 = particles[coords2index(i, j, width)];
+
+    Particle& p1 = newParticles[coords2index(i + 1, j, width)];
+    Particle& p2 = newParticles[coords2index(i - 1, j, width)];
+    Particle& p3 = newParticles[coords2index(i, j + 1, width)];
+    Particle& p4 = newParticles[coords2index(i, j - 1, width)];
+
+    float vx = p.vx;
+    float vy = p.vy;
+
+    float smoke = p0.smoke;
+
+    float a = (delta * viscosity) / (dx * dx);
+    vx = (p0.vx + a * (p1.vx + p2.vx + p3.vx + p4.vx)) / (1 + 4 * a);
+    vy = (p0.vy + a * (p1.vy + p2.vy + p3.vy + p4.vy)) / (1 + 4 * a);
+    smoke = (p0.smoke + a * (p1.smoke + p2.smoke + p3.smoke + p4.smoke)) / (1 + 4 * a);
+
+    p.vx = vx;
+    p.vy = vy;
+    p.smoke = smoke;
+
+    p.Fx = p0.Fx;
+    p.Fy = p0.Fy;
+}
+
 
 void Fluid::diffuse(float delta, float viscosity){
     Particle* newParticles = new Particle[width * height];
@@ -27,32 +54,7 @@ void Fluid::diffuse(float delta, float viscosity){
     for(uint k = 0; k < gs_iters; k++){
         for(uint i = 1; i < width - 1; i++){
             for(uint j = 1; j < height - 1; j++){
-                
-                Particle& p = newParticles[coords2index(i, j, width)];
-                Particle& p0 = particles[coords2index(i, j, width)];
-
-                Particle& p1 = newParticles[coords2index(i + 1, j, width)];
-                Particle& p2 = newParticles[coords2index(i - 1, j, width)];
-                Particle& p3 = newParticles[coords2index(i, j + 1, width)];
-                Particle& p4 = newParticles[coords2index(i, j - 1, width)];
-
-                float vx = p.vx;
-                float vy = p.vy;
-
-                float smoke = p0.smoke;
-
-                float a = (delta * viscosity) / (dx * dx);
-                vx = (p0.vx + a * (p1.vx + p2.vx + p3.vx + p4.vx)) / (1 + 4 * a);
-                vy = (p0.vy + a * (p1.vy + p2.vy + p3.vy + p4.vy)) / (1 + 4 * a);
-                smoke = (p0.smoke + a * (p1.smoke + p2.smoke + p3.smoke + p4.smoke)) / (1 + 4 * a);
-
-                p.vx = vx;
-                p.vy = vy;
-                p.smoke = smoke;
-
-                p.Fx = p0.Fx;
-                p.Fy = p0.Fy;
-
+                diffuse_iteration(newParticles, delta, viscosity, i, j);
             }
         }
     }
@@ -63,49 +65,53 @@ void Fluid::diffuse(float delta, float viscosity){
 }
 
 
+void Fluid::advect_iteration(Particle* newParticles, float delta, uint i, uint j){
+    Particle& p = newParticles[coords2index(i, j, width)];
+    Particle& p0 = particles[coords2index(i, j, width)];
+
+    Particle& p1 = newParticles[coords2index(i + 1, j, width)];
+    Particle& p2 = newParticles[coords2index(i - 1, j, width)];
+
+    Particle& p3 = newParticles[coords2index(i, j + 1, width)];
+    Particle& p4 = newParticles[coords2index(i, j - 1, width)];
+
+    float vx = p0.vx;
+    float vy = p0.vy;
+
+    float smoke = p0.smoke;
+
+    float vxx = (p1.vx - p2.vx) / (2 * dx);
+    float vxy = (p3.vx - p4.vx) / (2 * dx);
+
+    float vyy = (p3.vy - p4.vy) / (2 * dx);
+    float vyx = (p1.vy - p2.vy) / (2 * dx);
+
+    float sx = (p1.smoke - p2.smoke) / (2 * dx);
+    float sy = (p3.smoke - p4.smoke) / (2 * dx);
+    
+    vx = (vx - delta*p.vy*vxy) / (1 + delta*vxx);
+    vy = (vy - delta*p.vx*vyx) / (1 + delta*vyy);
+
+    smoke = (smoke - delta*p.vx*sx - delta*p.vy*sy) / (1 + delta*(vxx + vyy));
+
+
+
+    p.vx = vx;
+    p.vy = vy;
+
+    p.Fx = p0.Fx;
+    p.Fy = p0.Fy;
+
+    p.smoke = smoke;
+}
+
 void Fluid::advect(float delta){
     Particle* newParticles = new Particle[width * height];
 
     for(uint k = 0; k < gs_iters; k++){
         for(uint i = 1; i < width - 1; i++){
             for(uint j = 1; j < height - 1; j++){
-                Particle& p = newParticles[coords2index(i, j, width)];
-                Particle& p0 = particles[coords2index(i, j, width)];
-
-                Particle& p1 = newParticles[coords2index(i + 1, j, width)];
-                Particle& p2 = newParticles[coords2index(i - 1, j, width)];
-
-                Particle& p3 = newParticles[coords2index(i, j + 1, width)];
-                Particle& p4 = newParticles[coords2index(i, j - 1, width)];
-
-                float vx = p0.vx;
-                float vy = p0.vy;
-
-                float smoke = p0.smoke;
-
-                float vxx = (p1.vx - p2.vx) / (2 * dx);
-                float vxy = (p3.vx - p4.vx) / (2 * dx);
-
-                float vyy = (p3.vy - p4.vy) / (2 * dx);
-                float vyx = (p1.vy - p2.vy) / (2 * dx);
-
-                float sx = (p1.smoke - p2.smoke) / (2 * dx);
-                float sy = (p3.smoke - p4.smoke) / (2 * dx);
-                
-                vx = (vx - delta*p.vy*vxy) / (1 + delta*vxx);
-                vy = (vy - delta*p.vx*vyx) / (1 + delta*vyy);
-
-                smoke = (smoke - delta*p.vx*sx - delta*p.vy*sy) / (1 + delta*(vxx + vyy));
-
-
-
-                p.vx = vx;
-                p.vy = vy;
-
-                p.Fx = p0.Fx;
-                p.Fy = p0.Fy;
-
-                p.smoke = smoke;
+                advect_iteration(newParticles, delta, i, j);
             }
         }
     }
@@ -125,6 +131,18 @@ void Fluid::external_forces(float delta){
             p.vy += delta * p.Fy;
         }
     }
+}
+
+void Fluid::pressure_iteration(float delta, uint i, uint j){
+    Particle& p = particles[coords2index(i, j, width)];
+
+    Particle& p1 = particles[coords2index(i + 1, j, width)];
+    Particle& p2 = particles[coords2index(i - 1, j, width)];
+
+    Particle& p3 = particles[coords2index(i, j + 1, width)];
+    Particle& p4 = particles[coords2index(i, j - 1, width)];
+
+    p.p = (p1.p + p2.p + p3.p + p4.p - p.div * dx * dx / delta) / 4;
 }
 
 
@@ -154,15 +172,7 @@ void Fluid::incompressibility(float delta){
     for(uint k = 0; k < gs_iters; k++){
         for(uint i = 1; i < width - 1; i++){
             for(uint j = 1; j < height - 1; j++){
-                Particle& p = particles[coords2index(i, j, width)];
-
-                Particle& p1 = particles[coords2index(i + 1, j, width)];
-                Particle& p2 = particles[coords2index(i - 1, j, width)];
-
-                Particle& p3 = particles[coords2index(i, j + 1, width)];
-                Particle& p4 = particles[coords2index(i, j - 1, width)];
-
-                p.p = (p1.p + p2.p + p3.p + p4.p - p.div * dx * dx / delta) / 4;
+                pressure_iteration(delta, i, j);
             }
         }
     }

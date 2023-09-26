@@ -10,8 +10,8 @@
 
 int main(int args, char** argv){
 
-    float WIDTH = 200;
-    float HEIGHT = 140;
+    float WIDTH = 100;
+    float HEIGHT = 70;
 
     float WINDOW_WIDTH = 1000;
     float WINDOW_HEIGHT = 700;
@@ -52,12 +52,12 @@ int main(int args, char** argv){
             f.particles[coords2index(i, j, f.width)].vy = 0;
             f.particles[coords2index(i, j, f.width)].p = 0;
 
-            if(i >= 20 && i <= 40 && j >= 80 && j <= 88){
+            if(i >= 10 && i <= 20 && j >= 40 && j <= 44){
                 f.particles[coords2index(i, j, f.width)].Fx = 100;
                 f.particles[coords2index(i, j, f.width)].smoke = 1;
             }
 
-            if(j >= 20 && j <= 40 && i >= 56 && i <= 64){
+            if(j >= 10 && j <= 20 && i >= 28 && i <= 32){
                 f.particles[coords2index(i, j, f.width)].Fy = 200;
                 f.particles[coords2index(i, j, f.width)].smoke = 1;
             }
@@ -77,7 +77,7 @@ int main(int args, char** argv){
         auto end = std::chrono::high_resolution_clock::now();
 
         window.clear();
-        drawParticles(window, f, 5, render_energy, render_velocities);
+        drawParticles(window, f, 10, render_energy, render_velocities);
         window.display();
 
         if(render){

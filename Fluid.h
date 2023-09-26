@@ -44,13 +44,15 @@ class Fluid {
 
         Fluid(uint width, uint height, float dx);
 
-
+        void diffuse_iteration(Particle* newParticles, float delta, float viscosity, uint i, uint j);
         void diffuse(float delta, float viscosity = 0.1);
 
+        void advect_iteration(Particle* newParticles, float delta, uint i, uint j);
         void advect(float delta);
 
         void external_forces(float delta);
 
+        void pressure_iteration(float delta, uint i, uint j);
         void incompressibility(float delta);
 
         void physics(float delta);
