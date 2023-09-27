@@ -243,7 +243,7 @@ void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool rend
             if(speed > 100){
                 speed = 100;
             }
-            arrow.setScale(speed / 100, speed / 100);
+            arrow.setScale(block_size * speed / 2000, block_size * speed / 2000);
             window.draw(arrow);
 
         }

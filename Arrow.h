@@ -21,5 +21,5 @@ class Arrow : public sf::Transformable, public sf::Drawable {
 		sf::Color color;
 		uint8_t r, g, b = 255;
         sf::RectangleShape line;
-        sf::CircleShape head;
+        sf::ConvexShape head;
 };
