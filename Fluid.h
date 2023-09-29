@@ -62,9 +62,14 @@ class Fluid {
 
         void physics(float delta);
 
+        //custom set_boundaries function
+        void (*set_boundaries)(Particle* particles, uint width, uint height, uint identifier) = nullptr;
+
         float energy();
 
 };
 
 
 void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size = 20, bool render_energy = true, bool render_velocities = true);
+
+void set_bnd(Particle* particles, uint width, uint height, uint identifier);

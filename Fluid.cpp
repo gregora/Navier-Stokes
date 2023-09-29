@@ -19,6 +19,8 @@ Fluid::Fluid(uint width, uint height, float dx){
 
     particles = new Particle[width * height];
 
+    this -> set_boundaries = set_bnd;
+
 }
 
 void Fluid::diffuse_iteration(Particle* newParticles, float delta, float viscosity, uint i, uint j){
@@ -138,6 +140,9 @@ void Fluid::incompressibility(float delta){
         }
     }
 
+    set_boundaries(particles, width, height, 3);
+    set_boundaries(particles, width, height, 4);
+
     for(uint k = 0; k < gs_iters; k++){
         std::thread threads_array[threads];
 
@@ -148,6 +153,8 @@ void Fluid::incompressibility(float delta){
         for(uint t = 0; t < threads; t++){
             threads_array[t].join();
         }
+
+        set_boundaries(particles, width, height, 4);
 
     }
 
@@ -167,6 +174,9 @@ void Fluid::incompressibility(float delta){
         }
     }
 
+    set_boundaries(particles, width, height, 1);
+    set_boundaries(particles, width, height, 2);
+
 }
 
 void Fluid::physics(float delta){
@@ -175,6 +185,8 @@ void Fluid::physics(float delta){
     auto start = std::chrono::high_resolution_clock::now();
 
     external_forces(delta);
+    set_boundaries(particles, width, height, 0);
+    set_boundaries(particles, width, height, 1);
     advect(delta);
     diffuse(delta);
     incompressibility(delta);
@@ -195,6 +207,69 @@ float Fluid::energy(){
     }
 
     return eng;
+}
+
+
+
+void set_bnd(Particle* particles, uint width, uint height, uint identifier){
+
+    /*
+    IDENTIFIERS:
+    1 - velocity x
+    2 - velocity y
+    3 - divergence
+    4 - pressure
+    */
+
+    //top and bottom
+    for(uint i = 1; i < width - 1; i++){
+
+        if(identifier == 1){
+            particles[coords2index(i, 0, width)].vx = -particles[coords2index(i, 1, width)].vx;
+            particles[coords2index(i, height - 1, width)].vx = -particles[coords2index(i, height - 2, width)].vx;
+        }
+
+        if(identifier == 2){
+            particles[coords2index(i, 0, width)].vy = -particles[coords2index(i, 1, width)].vy;
+            particles[coords2index(i, height - 1, width)].vy = -particles[coords2index(i, height - 2, width)].vy;
+        }
+
+        if(identifier == 3){
+            particles[coords2index(i, 0, width)].div = -particles[coords2index(i, 1, width)].div;
+            particles[coords2index(i, height - 1, width)].div = -particles[coords2index(i, height - 2, width)].div;
+        }
+
+        if(identifier == 4){
+            particles[coords2index(i, 0, width)].p = particles[coords2index(i, 1, width)].p;
+            particles[coords2index(i, height - 1, width)].p = particles[coords2index(i, height - 2, width)].p;        
+        }
+    }
+
+    //left and right
+    for(uint j = 1; j < height - 1; j++){
+
+        if(identifier == 1){
+            particles[coords2index(0, j, width)].vx = -particles[coords2index(1, j, width)].vx;
+            particles[coords2index(width - 1, j, width)].vx = -particles[coords2index(width - 2, j, width)].vx;
+        }
+
+        if(identifier == 2){
+            particles[coords2index(0, j, width)].vy = -particles[coords2index(1, j, width)].vy;
+            particles[coords2index(width - 1, j, width)].vy = -particles[coords2index(width - 2, j, width)].vy;
+        }
+
+        if(identifier == 3){
+            particles[coords2index(0, j, width)].div = -particles[coords2index(1, j, width)].div;
+            particles[coords2index(width - 1, j, width)].div = -particles[coords2index(width - 2, j, width)].div;
+        }
+
+        if(identifier == 4){
+            particles[coords2index(0, j, width)].p = particles[coords2index(1, j, width)].p;
+            particles[coords2index(width - 1, j, width)].p = particles[coords2index(width - 2, j, width)].p;
+        }
+    }
+
+
 }
 
 
