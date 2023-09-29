@@ -176,7 +176,6 @@ void Fluid::incompressibility(float delta){
 
     set_boundaries(particles, width, height, 1);
     set_boundaries(particles, width, height, 2);
-    set_boundaries(particles, width, height, 5);
 
 }
 
@@ -218,7 +217,6 @@ void set_bnd(Particle* particles, uint width, uint height, uint identifier){
     2 - velocity y
     3 - divergence
     4 - pressure
-    5 - smoke
     */
 
     //top and bottom
