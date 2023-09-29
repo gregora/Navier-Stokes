@@ -185,8 +185,6 @@ void Fluid::physics(float delta){
     auto start = std::chrono::high_resolution_clock::now();
 
     external_forces(delta);
-    set_boundaries(particles, width, height, 0);
-    set_boundaries(particles, width, height, 1);
     advect(delta);
     diffuse(delta);
     incompressibility(delta);
@@ -225,8 +223,10 @@ void set_bnd(Particle* particles, uint width, uint height, uint identifier){
     for(uint i = 1; i < width - 1; i++){
 
         if(identifier == 1){
-            particles[coords2index(i, 0, width)].vx = -particles[coords2index(i, 1, width)].vx;
-            particles[coords2index(i, height - 1, width)].vx = -particles[coords2index(i, height - 2, width)].vx;
+            //particles[coords2index(i, 0, width)].vx = particles[coords2index(i, 1, width)].vx;
+            //particles[coords2index(i, height - 1, width)].vx = particles[coords2index(i, height - 2, width)].vx;
+            particles[coords2index(i, 0, width)].vx = 0;
+            particles[coords2index(i, height - 1, width)].vx = 0;
         }
 
         if(identifier == 2){
@@ -235,8 +235,8 @@ void set_bnd(Particle* particles, uint width, uint height, uint identifier){
         }
 
         if(identifier == 3){
-            particles[coords2index(i, 0, width)].div = -particles[coords2index(i, 1, width)].div;
-            particles[coords2index(i, height - 1, width)].div = -particles[coords2index(i, height - 2, width)].div;
+            particles[coords2index(i, 0, width)].div = particles[coords2index(i, 1, width)].div;
+            particles[coords2index(i, height - 1, width)].div = particles[coords2index(i, height - 2, width)].div;
         }
 
         if(identifier == 4){
@@ -254,13 +254,15 @@ void set_bnd(Particle* particles, uint width, uint height, uint identifier){
         }
 
         if(identifier == 2){
-            particles[coords2index(0, j, width)].vy = -particles[coords2index(1, j, width)].vy;
-            particles[coords2index(width - 1, j, width)].vy = -particles[coords2index(width - 2, j, width)].vy;
+            //particles[coords2index(0, j, width)].vy = particles[coords2index(1, j, width)].vy;
+            //particles[coords2index(width - 1, j, width)].vy = particles[coords2index(width - 2, j, width)].vy;
+            particles[coords2index(0, j, width)].vy = 0;
+            particles[coords2index(width - 1, j, width)].vy = 0;
         }
 
         if(identifier == 3){
-            particles[coords2index(0, j, width)].div = -particles[coords2index(1, j, width)].div;
-            particles[coords2index(width - 1, j, width)].div = -particles[coords2index(width - 2, j, width)].div;
+            particles[coords2index(0, j, width)].div = particles[coords2index(1, j, width)].div;
+            particles[coords2index(width - 1, j, width)].div = particles[coords2index(width - 2, j, width)].div;
         }
 
         if(identifier == 4){
