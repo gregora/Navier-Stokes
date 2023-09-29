@@ -10,11 +10,13 @@
 
 int main(int args, char** argv){
 
-    float WIDTH = 100;
+    float WIDTH = 70;
     float HEIGHT = 70;
 
-    float WINDOW_WIDTH = 1000;
+    float WINDOW_WIDTH = 700;
     float WINDOW_HEIGHT = 700;
+
+    uint block_size = (uint) (WINDOW_WIDTH / WIDTH);
 
     float simulation_time = 20;
     float delta = 0.02;
@@ -49,6 +51,7 @@ int main(int args, char** argv){
     Fluid f(WIDTH, HEIGHT, 1);
     f.gs_iters = 20;
     f.threads = threads;
+    f.dx = 50.0 / HEIGHT;
 
 
     for(int i = 0; i < WIDTH; i++){
@@ -84,7 +87,7 @@ int main(int args, char** argv){
         auto end = std::chrono::high_resolution_clock::now();
 
         window.clear();
-        drawParticles(window, f, 10, render_energy, render_velocities);
+        drawParticles(window, f, block_size, render_energy, render_velocities);
         window.display();
 
         if(render){
