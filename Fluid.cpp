@@ -75,12 +75,16 @@ void Fluid::advect_iteration(Particle* newParticles, float delta, uint i, uint j
 
     float sx = (p1.smoke - p2.smoke) / (2 * dx);
     float sy = (p3.smoke - p4.smoke) / (2 * dx);
-    
-    vx = (vx - delta*p.vy*vxy) / (1 + delta*vxx);
-    vy = (vy - delta*p.vx*vyx) / (1 + delta*vyy);
 
-    smoke = (smoke - delta*p.vx*sx - delta*p.vy*sy) / (1 + delta*(vxx + vyy));
+    float alpha = delta * vxy / ((1 + delta*vxx) * (1 + delta * vyy));
 
+    //vx = (vx - delta*p.vy*vxy) / (1 + delta*vxx);
+    //vy = (vy - delta*p.vx*vyx) / (1 + delta*vyy);
+
+    vx = (vx / (1 + delta*vxx) - alpha * vy) / (1 - delta*alpha*vyx);
+    vy = (vy - delta*vx*vyx) / (1 + delta * vyy);
+
+    smoke = smoke - delta*(vx*sx + vy*sy);
 
 
     p.vx = vx;
