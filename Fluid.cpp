@@ -288,7 +288,7 @@ void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool rend
         for(int j = 0; j < f.height; j++){
             Particle& p = f.particles[coords2index(i, j, f.width)];
 
-            float speed = 50*sqrt(p.vx * p.vx + p.vy * p.vy);
+            float speed = 70*sqrt(p.vx * p.vx + p.vy * p.vy);
             
             if(speed > 255){
                 speed = 255;
