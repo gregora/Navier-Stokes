@@ -5,21 +5,21 @@
 #include "math.h"
 #include <thread>
 #include <chrono>
-#include "Fluid.h"
+#include "misc.h"
 
 
 int main(int args, char** argv){
 
-    float WIDTH = 140;
+    float WIDTH = 120;
     float HEIGHT = 100;
 
-    float WINDOW_WIDTH = 1400;
+    float WINDOW_WIDTH = 1200;
     float WINDOW_HEIGHT = 1000;
 
     uint block_size = (uint) (WINDOW_WIDTH / WIDTH);
 
     float simulation_time = 20;
-    float delta = 0.04;
+    float delta = 0.02;
     uint threads = 1;
 
     bool render = false;
@@ -52,7 +52,7 @@ int main(int args, char** argv){
     f.gs_iters = 20;
     f.threads = threads;
     f.dx = 50.0 / HEIGHT;
-
+    f.set_boundaries = set_bnd2;
 
     for(int i = 0; i < WIDTH; i++){
         for(int j = 0; j < HEIGHT; j++){

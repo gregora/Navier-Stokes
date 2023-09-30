@@ -187,6 +187,7 @@ void Fluid::incompressibility(float delta){
 
     set_boundaries(particles, width, height, 1);
     set_boundaries(particles, width, height, 2);
+    set_boundaries(particles, width, height, 5);
 
 }
 
