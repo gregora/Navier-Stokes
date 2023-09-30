@@ -6,6 +6,7 @@
 #include <thread>
 #include <chrono>
 #include "misc.h"
+#include "Fluid.h"
 
 
 int main(int args, char** argv){
@@ -19,7 +20,7 @@ int main(int args, char** argv){
     uint block_size = (uint) (WINDOW_WIDTH / WIDTH);
 
     float simulation_time = 20;
-    float delta = 0.02;
+    float delta = 0.04;
     uint threads = 1;
 
     bool render = false;

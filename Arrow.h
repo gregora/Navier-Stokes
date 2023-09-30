@@ -1,3 +1,7 @@
+#if !defined _ARROW_H
+#define	_ARROW_H 1
+
+
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <math.h>
@@ -23,3 +27,5 @@ class Arrow : public sf::Transformable, public sf::Drawable {
         sf::RectangleShape line;
         sf::ConvexShape head;
 };
+
+#endif

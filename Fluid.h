@@ -1,3 +1,7 @@
+#if !defined _FLUID_H
+#define	_FLUID_H 1
+
+
 #include <SFML/Graphics.hpp>
 #include "stdio.h"
 #include <string.h>
@@ -73,3 +77,5 @@ class Fluid {
 void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size = 20, bool render_energy = true, bool render_velocities = true);
 
 void set_bnd(Particle* particles, uint width, uint height, uint identifier);
+
+#endif
