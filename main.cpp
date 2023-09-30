@@ -10,16 +10,16 @@
 
 int main(int args, char** argv){
 
-    float WIDTH = 70;
-    float HEIGHT = 70;
+    float WIDTH = 140;
+    float HEIGHT = 100;
 
-    float WINDOW_WIDTH = 700;
-    float WINDOW_HEIGHT = 700;
+    float WINDOW_WIDTH = 1400;
+    float WINDOW_HEIGHT = 1000;
 
     uint block_size = (uint) (WINDOW_WIDTH / WIDTH);
 
     float simulation_time = 20;
-    float delta = 0.02;
+    float delta = 0.04;
     uint threads = 1;
 
     bool render = false;
@@ -64,12 +64,12 @@ int main(int args, char** argv){
 
             if(i >= 10 && i <= 20 && j >= 40 && j <= 44){
                 f.particles[coords2index(i, j, f.width)].Fx = 100;
-                f.particles[coords2index(i, j, f.width)].smoke = 1;
+                f.particles[coords2index(i, j, f.width)].smoke = 0.5;
             }
 
             if(j >= 10 && j <= 20 && i >= 28 && i <= 32){
                 f.particles[coords2index(i, j, f.width)].Fy = 200;
-                f.particles[coords2index(i, j, f.width)].smoke = 1;
+                f.particles[coords2index(i, j, f.width)].smoke = 0.5;
             }
 
         }
@@ -97,15 +97,20 @@ int main(int args, char** argv){
             printf("Rendered frame %d at simulation time %fs\n", frame, frame*delta);
         }
 
-        if(frame == 2){
-            for(int i = 0; i < WIDTH; i++){
-                for(int j = 0; j < HEIGHT; j++){
-               
-                    Particle& p = f.particles[coords2index(i, j, f.width)];
-                    p.Fx = 0;
-                    p.Fy = 0;
 
+        for(int i = 0; i < WIDTH; i++){
+            for(int j = 0; j < HEIGHT; j++){
+            
+                if(i >= 10 && i <= 20 && j >= 40 && j <= 44){
+                    f.particles[coords2index(i, j, f.width)].Fx = 100;
+                    f.particles[coords2index(i, j, f.width)].smoke = 0.5;
                 }
+
+                if(j >= 10 && j <= 20 && i >= 28 && i <= 32){
+                    f.particles[coords2index(i, j, f.width)].Fy = 200;
+                    f.particles[coords2index(i, j, f.width)].smoke = 0.5;
+                }
+
             }
         }
     }

@@ -53,47 +53,54 @@ void Fluid::diffuse_iteration(Particle* newParticles, float delta, float viscosi
 
 
 void Fluid::advect_iteration(Particle* newParticles, float delta, uint i, uint j){
-    Particle& p = newParticles[coords2index(i, j, width)];
+
     Particle& p0 = particles[coords2index(i, j, width)];
-
-    Particle& p1 = newParticles[coords2index(i + 1, j, width)];
-    Particle& p2 = newParticles[coords2index(i - 1, j, width)];
-
-    Particle& p3 = newParticles[coords2index(i, j + 1, width)];
-    Particle& p4 = newParticles[coords2index(i, j - 1, width)];
 
     float vx = p0.vx;
     float vy = p0.vy;
 
-    float smoke = p0.smoke;
+    float x = i - delta * vx / dx;
+    float y = j - delta * vy / dx;
 
-    float vxx = (p1.vx - p2.vx) / (2 * dx);
-    float vxy = (p3.vx - p4.vx) / (2 * dx);
+    if(x < 0.5){
+        x = 0.5;
+    }
 
-    float vyy = (p3.vy - p4.vy) / (2 * dx);
-    float vyx = (p1.vy - p2.vy) / (2 * dx);
+    if(x > width - 1.5){
+        x = width - 1.5;
+    }
 
-    float sx = (p1.smoke - p2.smoke) / (2 * dx);
-    float sy = (p3.smoke - p4.smoke) / (2 * dx);
+    if(y < 0.5){
+        y = 0.5;
+    }
 
-    float alpha = delta * vxy / ((1 + delta*vxx) * (1 + delta * vyy));
+    if(y > height - 1.5){
+        y = height - 1.5;
+    }
 
-    //vx = (vx - delta*p.vy*vxy) / (1 + delta*vxx);
-    //vy = (vy - delta*p.vx*vyx) / (1 + delta*vyy);
+    float x0 = (uint) x;
+    float y0 = (uint) y;
 
-    vx = (vx / (1 + delta*vxx) - alpha * vy) / (1 - delta*alpha*vyx);
-    vy = (vy - delta*vx*vyx) / (1 + delta * vyy);
+    float x1 = x0 + 1;
+    float y1 = y0 + 1;
 
-    smoke = smoke - delta*(vx*sx + vy*sy);
+    float k1 = x - x0;
+    float k2 = 1 - k1;
+    float k3 = y - y0;
+    float k4 = 1 - k3;
 
+    Particle& p1 = particles[coords2index(x0, y0, width)];
+    Particle& p2 = particles[coords2index(x1, y0, width)];
+    Particle& p3 = particles[coords2index(x0, y1, width)];
+    Particle& p4 = particles[coords2index(x1, y1, width)];
 
-    p.vx = vx;
-    p.vy = vy;
+    Particle& p = newParticles[coords2index(i, j, width)];
 
-    p.Fx = p0.Fx;
-    p.Fy = p0.Fy;
+    p.vx = k2 * (k4 * p1.vx + k3 * p3.vx) + k1 * (k4 * p2.vx + k3 * p4.vx);
+    p.vy = k2 * (k4 * p1.vy + k3 * p3.vy) + k1 * (k4 * p2.vy + k3 * p4.vy);
 
-    p.smoke = smoke;
+    p.smoke = k2 * (k4 * p1.smoke + k3 * p3.smoke) + k1 * (k4 * p2.smoke + k3 * p4.smoke);
+
 }
 
 
@@ -414,14 +421,12 @@ void Fluid::advect(float delta){
 
     std::thread threads_array[threads];
 
-    for(uint k = 0; k < gs_iters; k++){
-        for(uint t = 0; t < threads; t++){
-            threads_array[t] = std::thread(&Fluid::advect_sector, this, newParticles, delta, t * width / threads, (t + 1) * width / threads);
-        }
+    for(uint t = 0; t < threads; t++){
+        threads_array[t] = std::thread(&Fluid::advect_sector, this, newParticles, delta, t * width / threads, (t + 1) * width / threads);
+    }
 
-        for(uint t = 0; t < threads; t++){
-            threads_array[t].join();
-        }
+    for(uint t = 0; t < threads; t++){
+        threads_array[t].join();
     }
 
     delete particles;
