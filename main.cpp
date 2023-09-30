@@ -59,8 +59,6 @@ int main(int args, char** argv){
     f.gs_iters = 20;
     f.threads = threads;
     f.dx = 50.0 / HEIGHT;
-    //f.set_boundaries = set_bnd2;
-
 
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Fluid Simulation");
 
@@ -97,7 +95,5 @@ int main(int args, char** argv){
 		system("rm -r render/*.png");
 		printf("Done.\n");
 	}
-
-
 
 }
