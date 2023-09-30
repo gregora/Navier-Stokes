@@ -6,6 +6,7 @@
 #include <thread>
 #include <chrono>
 #include "misc.h"
+#include "examples.h"
 #include "Fluid.h"
 
 
@@ -22,6 +23,7 @@ int main(int args, char** argv){
     float simulation_time = 20;
     float delta = 0.04;
     uint threads = 1;
+    uint example = 1;
 
     bool render = false;
     bool render_energy = false;
@@ -47,41 +49,30 @@ int main(int args, char** argv){
             threads = atoi(argv[i + 1]);
         }
 
+        if(strcmp(argv[i], "-example") == 0){
+            example = atoi(argv[i + 1]);
+        }
+
     }
 
     Fluid f(WIDTH, HEIGHT, 1);
     f.gs_iters = 20;
     f.threads = threads;
     f.dx = 50.0 / HEIGHT;
-    f.set_boundaries = set_bnd2;
-
-    for(int i = 0; i < WIDTH; i++){
-        for(int j = 0; j < HEIGHT; j++){
-            
-            
-            f.particles[coords2index(i, j, f.width)].vx = 0;
-            f.particles[coords2index(i, j, f.width)].vy = 0;
-            f.particles[coords2index(i, j, f.width)].p = 0;
-
-            if(i >= 10 && i <= 20 && j >= 40 && j <= 44){
-                f.particles[coords2index(i, j, f.width)].Fx = 100;
-                f.particles[coords2index(i, j, f.width)].smoke = 0.5;
-            }
-
-            if(j >= 10 && j <= 20 && i >= 28 && i <= 32){
-                f.particles[coords2index(i, j, f.width)].Fy = 200;
-                f.particles[coords2index(i, j, f.width)].smoke = 0.5;
-            }
-
-        }
-    }
+    //f.set_boundaries = set_bnd2;
 
 
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Fluid Simulation");
 
     int frames = (int) (simulation_time / delta);
     for(int frame = 0; frame < frames; frame++){
-        //time physics with chrono
+
+        if(example == 1){
+            example1(f);
+        }else if (example == 2){
+            example2(f);
+        }
+        
 
         auto start = std::chrono::high_resolution_clock::now();
         f.physics(delta);
@@ -96,23 +87,6 @@ int main(int args, char** argv){
             
             screenshot.saveToFile("render/" + std::to_string(frame) + ".png");
             printf("Rendered frame %d at simulation time %fs\n", frame, frame*delta);
-        }
-
-
-        for(int i = 0; i < WIDTH; i++){
-            for(int j = 0; j < HEIGHT; j++){
-            
-                if(i >= 10 && i <= 20 && j >= 40 && j <= 44){
-                    f.particles[coords2index(i, j, f.width)].Fx = 100;
-                    f.particles[coords2index(i, j, f.width)].smoke = 0.5;
-                }
-
-                if(j >= 10 && j <= 20 && i >= 28 && i <= 32){
-                    f.particles[coords2index(i, j, f.width)].Fy = 200;
-                    f.particles[coords2index(i, j, f.width)].smoke = 0.5;
-                }
-
-            }
         }
     }
 
