@@ -40,3 +40,18 @@ void example2(Fluid& f){
     }
 
 }
+
+void tunnel(Fluid& f){
+
+    f.set_boundaries = tunnel_bnd;
+    for(int j = 1; j < f.height - 1; j++){
+        Particle& p = f.particles[coords2index(1, j, f.width)];
+        
+        if(j >= 40 && j <= 60){
+            p.smoke = 0.5;
+        }
+
+        p.vx = 50;
+    }
+
+}

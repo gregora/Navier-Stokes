@@ -28,6 +28,7 @@ int main(int args, char** argv){
     bool render = false;
     bool render_energy = false;
     bool render_velocities = false;
+
     for(int i = 0; i < args; i++){
         if(strcmp(argv[i], "-render") == 0){
             render = true;
@@ -69,6 +70,8 @@ int main(int args, char** argv){
             example1(f);
         }else if (example == 2){
             example2(f);
+        }else if (example == 3){
+            tunnel(f);
         }
         
 

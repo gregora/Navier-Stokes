@@ -4,5 +4,6 @@
 #include "Fluid.h"
 
 void set_bnd2(Particle* particles, uint width, uint height, uint identifier);
+void tunnel_bnd(Particle* particles, uint width, uint height, uint identifier);
 
 #endif
