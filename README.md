@@ -16,4 +16,4 @@ Run `./main.out` in the root directory. The program supports the following comma
 * `-time <time>` - sets simulation time to `<time>` seconds
 * `-velocities` - render velocity field together with smoke
 * `-threads <threads>` - number of CPU threads to use
-* `-render` - renders the system to a video file in the `render` directory
+* `-render` - renders the system to a video file in the `render` directory as `output.mp4`
