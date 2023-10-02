@@ -71,7 +71,7 @@ int main(int args, char** argv){
         }else if (example == 2){
             example2(f);
         }else if (example == 3){
-            tunnel(f);
+            tunnel(f);            
         }
         
 
@@ -81,6 +81,11 @@ int main(int args, char** argv){
 
         window.clear();
         drawParticles(window, f, block_size, render_energy, render_velocities);
+        
+        if(example == 3){
+            postProcessingTunnel(window, block_size);
+        }
+
         window.display();
 
         if(render){

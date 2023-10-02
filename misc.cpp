@@ -144,8 +144,8 @@ void tunnel_bnd(Particle* particles, uint width, uint height, uint identifier){
     for(uint i = 1; i < width - 1; i++){
 
         if(identifier == 1){
-            particles[coords2index(i, 0, width)].vx = particles[coords2index(i, 1, width)].vx;
-            particles[coords2index(i, height - 1, width)].vx = particles[coords2index(i, height - 2, width)].vx;
+            particles[coords2index(i, 0, width)].vx = 50;
+            particles[coords2index(i, height - 1, width)].vx = 50;
         }
 
         if(identifier == 2){
@@ -199,11 +199,11 @@ void tunnel_bnd(Particle* particles, uint width, uint height, uint identifier){
     }
 
     //add another box
-    uint box_x_start = 30;
-    uint box_x_end = 40;
+    uint box_x_start = 20;
+    uint box_x_end = 30;
 
-    uint box_y_start = 45;
-    uint box_y_end = 55;
+    uint box_y_start = 48;
+    uint box_y_end = 52;
 
     for(uint i = box_x_start; i < box_x_end; i++){
 
@@ -280,16 +280,39 @@ void tunnel_bnd(Particle* particles, uint width, uint height, uint identifier){
     }
 
 
-    particles[coords2index(0, 0, width)].vx = particles[coords2index(0, 1, width)].vx;
-    particles[coords2index(0, 0, width)].vy = particles[coords2index(1, 0, width)].vy;
+    if (identifier == 3 || identifier == 4)
+    {
+        particles[coords2index(0, 0, width)].vx = 50;
+        particles[coords2index(0, 0, width)].vy = 0;
 
-    particles[coords2index(width - 1, 0, width)].vx = particles[coords2index(width - 1, 1, width)].vx;
-    particles[coords2index(width - 1, 0, width)].vy = particles[coords2index(width - 2, 0, width)].vy;
+        particles[coords2index(width - 1, 0, width)].vx = 50;
+        particles[coords2index(width - 1, 0, width)].vy = 0;
 
-    particles[coords2index(0, height - 1, width)].vx = particles[coords2index(0, height - 2, width)].vx;
-    particles[coords2index(0, height - 1, width)].vy = particles[coords2index(1, height - 1, width)].vy;
+        particles[coords2index(0, height - 1, width)].vx = 50;
+        particles[coords2index(0, height - 1, width)].vy = 0;
 
-    particles[coords2index(width - 1, height - 1, width)].vx = particles[coords2index(width - 1, height - 2, width)].vx;
-    particles[coords2index(width - 1, height - 1, width)].vy = particles[coords2index(width - 2, height - 1, width)].vy;
+        particles[coords2index(width - 1, height - 1, width)].vx = 50;
+        particles[coords2index(width - 1, height - 1, width)].vy = 0;
+    }
+    
+}
+
+
+void postProcessingTunnel(sf::RenderWindow& window, uint block_size){
+
+    uint box_x_start = 20;
+    uint box_x_end = 30;
+
+    uint box_y_start = 48;
+    uint box_y_end = 52;
+
+    uint width = (box_x_end - box_x_start)*block_size;
+    uint height = (box_y_end - box_y_start)*block_size;
+
+    sf::RectangleShape box(sf::Vector2f(width, height));
+
+    box.setPosition(box_x_start*block_size, box_y_start*block_size);
+
+    window.draw(box);
 
 }
