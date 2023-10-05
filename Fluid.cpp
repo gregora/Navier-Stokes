@@ -229,6 +229,7 @@ void set_bnd(Particle* particles, uint width, uint height, uint identifier){
     2 - velocity y
     3 - divergence
     4 - pressure
+    5 - smoke
     */
 
     //top and bottom
@@ -394,6 +395,11 @@ void Fluid::diffuse(float delta, float viscosity){
             threads_array[t].join();
         }
 
+        set_boundaries(newParticles, width, height, 1);
+        set_boundaries(newParticles, width, height, 2);
+        set_boundaries(newParticles, width, height, 5);
+
+
     }
 
     delete particles;
@@ -429,6 +435,11 @@ void Fluid::advect(float delta){
     for(uint t = 0; t < threads; t++){
         threads_array[t].join();
     }
+
+    set_boundaries(newParticles, width, height, 1);
+    set_boundaries(newParticles, width, height, 2);
+    set_boundaries(newParticles, width, height, 5);
+
 
     delete particles;
     particles = newParticles;
