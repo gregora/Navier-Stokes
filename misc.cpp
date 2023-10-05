@@ -227,6 +227,11 @@ void tunnel_bnd(Particle* particles, uint width, uint height, uint identifier){
             particles[coords2index(i, box_y_end - 1, width)].p = particles[coords2index(i, box_y_end, width)].p;
         }
 
+        if(identifier == 5){
+            particles[coords2index(i, box_y_start, width)].smoke = particles[coords2index(i, box_y_start - 1, width)].smoke;
+            particles[coords2index(i, box_y_end - 1, width)].smoke = particles[coords2index(i, box_y_end, width)].smoke;
+        }
+
     }
 
     for(uint j = box_y_start; j < box_y_end; j++){
@@ -250,6 +255,12 @@ void tunnel_bnd(Particle* particles, uint width, uint height, uint identifier){
             particles[coords2index(box_x_start, j, width)].p = particles[coords2index(box_x_start - 1, j, width)].p;
             particles[coords2index(box_x_end - 1, j, width)].p = particles[coords2index(box_x_end, j, width)].p;
         }
+
+        if(identifier == 5){
+            particles[coords2index(box_x_start, j, width)].smoke = particles[coords2index(box_x_start - 1, j, width)].smoke;
+            particles[coords2index(box_x_end - 1, j, width)].smoke = particles[coords2index(box_x_end, j, width)].smoke;
+        }
+        
 
     }
 
