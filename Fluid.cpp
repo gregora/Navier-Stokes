@@ -470,6 +470,16 @@ void Fluid::advect_sector(Particle* newParticles, float delta, uint start, uint 
 void Fluid::advect(float delta){
     Particle* newParticles = new Particle[width * height];
 
+
+    if(show_warnings){
+        float max_dt = max_delta();
+        if(max_dt < delta){
+            printf("WARNING: Advection is unstable!\n");
+            printf("         delta = %f, delta_max = %f\n", delta, max_dt);
+
+        }
+    }
+
     std::thread threads_array[threads];
 
     for(uint t = 0; t < threads; t++){
@@ -488,6 +498,12 @@ void Fluid::advect(float delta){
     delete particles;
     particles = newParticles;
 
+}
+
+float Fluid::max_delta(){
+    float max_vel = max_velocity();
+    
+    return dx / max_vel;
 }
 
 void Fluid::pressure_sector(float delta, uint start, uint end){

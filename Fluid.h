@@ -46,6 +46,8 @@ class Fluid {
         
         uint gs_iters = 20; // Number of Gauss-Seidel iterations
 
+        bool show_warnings = true;
+
         Particle* particles;
 
         Fluid(uint width, uint height, float dx);
@@ -72,7 +74,7 @@ class Fluid {
         float energy();
 
         float max_velocity();
-
+        float max_delta(); //maximum delta for stability
 };
 
 

@@ -96,9 +96,9 @@ int main(int args, char** argv){
         }
 
 
-        float max_vel = f.max_velocity();
-        printf("Max velocity: %f\n", max_vel);
-        printf("       %f\n", max_vel * delta / f.dx);
+        //float max_vel = f.max_velocity();
+        //printf("Max velocity: %f\n", max_vel);
+        //printf("       %f\n", max_vel * delta / f.dx);
     }
 
     if(render){
