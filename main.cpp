@@ -24,6 +24,7 @@ int main(int args, char** argv){
     float delta = 0.04;
     uint threads = 1;
     uint example = 1;
+    bool warn = false;
 
     bool render = false;
     bool render_energy = false;
@@ -60,6 +61,7 @@ int main(int args, char** argv){
     f.gs_iters = 20;
     f.threads = threads;
     f.dx = 50.0 / HEIGHT;
+    f.show_warnings = warn;
 
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Fluid Simulation");
 
@@ -94,11 +96,6 @@ int main(int args, char** argv){
             screenshot.saveToFile("render/" + std::to_string(frame) + ".png");
             printf("Rendered frame %d at simulation time %fs\n", frame, frame*delta);
         }
-
-
-        //float max_vel = f.max_velocity();
-        //printf("Max velocity: %f\n", max_vel);
-        //printf("       %f\n", max_vel * delta / f.dx);
     }
 
     if(render){
