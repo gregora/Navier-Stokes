@@ -393,6 +393,21 @@ void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool rend
 }
 
 
+float Fluid::max_velocity(){
+    float max = 0;
+    for(uint i = 1; i < width - 1; i++){
+        for(uint j = 1; j < height - 1; j++){
+            Particle& p = particles[coords2index(i, j, width)];
+            float vel = sqrt(p.vx*p.vx + p.vy*p.vy);
+            if(vel > max){
+                max = vel;
+            }
+        }
+    }
+
+    return max;
+}
+
 
 
 void Fluid::diffuse_sector(Particle* newParticles, float delta, float viscosity, uint start, uint end){

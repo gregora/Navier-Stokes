@@ -94,6 +94,11 @@ int main(int args, char** argv){
             screenshot.saveToFile("render/" + std::to_string(frame) + ".png");
             printf("Rendered frame %d at simulation time %fs\n", frame, frame*delta);
         }
+
+
+        float max_vel = f.max_velocity();
+        printf("Max velocity: %f\n", max_vel);
+        printf("       %f\n", max_vel * delta / f.dx);
     }
 
     if(render){

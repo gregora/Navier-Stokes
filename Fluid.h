@@ -71,6 +71,8 @@ class Fluid {
 
         float energy();
 
+        float max_velocity();
+
 };
 
 
