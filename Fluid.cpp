@@ -54,6 +54,34 @@ void Fluid::diffuse_iteration(Particle* newParticles, float delta, float viscosi
 
 void Fluid::advect_iteration(Particle* newParticles, float delta, uint i, uint j){
 
+    // LAX METHOD FOR SOLVING ADVECTION EQUATION
+    // this method is so far unstable
+
+    /*
+    Particle& p0 = particles[coords2index(i, j, width)];
+
+    float vx = p0.vx;
+    float vy = p0.vy;
+
+
+    Particle& p1 = particles[coords2index(i + 1, j, width)];
+    Particle& p2 = particles[coords2index(i - 1, j, width)];
+
+    Particle& p3 = particles[coords2index(i, j + 1, width)];
+    Particle& p4 = particles[coords2index(i, j - 1, width)];
+
+
+    Particle& p = newParticles[coords2index(i, j, width)];
+
+    p.vx = p0.vx - p.vx * delta / dx * (p0.vx - p2.vx) - p.vy * delta / dx * (p0.vx - p4.vx);
+    p.vy = p0.vy - p.vx * delta / dx * (p0.vy - p2.vy) - p.vy * delta / dx * (p0.vy - p4.vy);
+
+    p.smoke = p0.smoke - p.vx * delta / dx * (p0.smoke - p2.smoke) - p.vy * delta / dx * (p0.smoke - p4.smoke);
+    */
+
+
+    // SEMI-LAGRANGIAN METHOD FOR SOLVING ADVECTION EQUATION
+    
     Particle& p0 = particles[coords2index(i, j, width)];
 
     float vx = p0.vx;
@@ -100,6 +128,7 @@ void Fluid::advect_iteration(Particle* newParticles, float delta, uint i, uint j
     p.vy = k2 * (k4 * p1.vy + k3 * p3.vy) + k1 * (k4 * p2.vy + k3 * p4.vy);
 
     p.smoke = k2 * (k4 * p1.smoke + k3 * p3.smoke) + k1 * (k4 * p2.smoke + k3 * p4.smoke);
+
 
 }
 
@@ -333,7 +362,7 @@ void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool rend
             if(speed > 100){
                 speed = 100;
             }
-            arrow.setScale(block_size * speed / 2000, block_size * speed / 2000);
+            arrow.setScale(block_size * speed / 1000, block_size * speed / 1000);
             window.draw(arrow);
 
         }
