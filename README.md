@@ -22,10 +22,10 @@ Run `./main.out` in the root directory. The program supports the following comma
 ### Examples
 
 #### Example 1 (Colliding plumes)
-![Example 1](render/example1.png)
+![Example 1](render/examples/example1.png)
 
 #### Example 2 (Colliding plumes and a wall)
-![Example 2](render/example2.png)
+![Example 2](render/examples/example2.png)
 
 #### Example 3 (Wind tunnel)
-![Example 3](render/example3.png)
+![Example 3](render/examples/example3.png)

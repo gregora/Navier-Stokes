@@ -34,13 +34,8 @@
 # Render files
 render/*
 
-# Unignore images
-!render/example1.png
-!render/example2.png
-!render/example3.png
-
-!render/smoke_collision4.mp4
-!render/wind_tunnel.mp4
+# Unignore examples
+!render/examples/
 
 # Vscode files
 .vscode/*
