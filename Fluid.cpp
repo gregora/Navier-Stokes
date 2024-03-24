@@ -496,6 +496,10 @@ void Fluid::advect(float delta){
 
 float Fluid::max_delta(){
     float max_vel = max_velocity();
+
+    if(max_vel == 0){
+        return 0.01;
+    }
     
     return dx / max_vel;
 }
