@@ -1,6 +1,42 @@
 #include "misc.h"
 
-void set_bnd2(Particle* particles, uint width, uint height, uint identifier){
+void ExampleFluid1::set_boundaries(Particle* particles, uint width, uint height, uint identifier){
+
+    for(int i = 0; i < width; i++){
+        for(int j = 0; j < height; j++){
+        
+            if(i >= 10 && i <= 20 && j >= 40 && j <= 44){
+                particles[coords2index(i, j, width)].Fx = 100;
+                particles[coords2index(i, j, width)].smoke = 0.5;
+            }
+
+            if(j >= 10 && j <= 20 && i >= 28 && i <= 32){
+                particles[coords2index(i, j, width)].Fy = 200;
+                particles[coords2index(i, j, width)].smoke = 0.5;
+            }
+
+        }
+    }
+
+}
+
+void ExampleFluid2::set_boundaries(Particle* particles, uint width, uint height, uint identifier){  
+
+    for(int i = 0; i < width; i++){
+        for(int j = 0; j < height; j++){
+        
+            if(i >= 10 && i <= 20 && j >= 40 && j <= 44){
+                particles[coords2index(i, j, width)].Fx = 100;
+                particles[coords2index(i, j, width)].smoke = 0.5;
+            }
+
+            if(j >= 10 && j <= 20 && i >= 28 && i <= 32){
+                particles[coords2index(i, j, width)].Fy = 200;
+                particles[coords2index(i, j, width)].smoke = 0.5;
+            }
+
+        }
+    }
 
     //top and bottom
     for(uint i = 1; i < width - 1; i++){
@@ -137,8 +173,17 @@ void set_bnd2(Particle* particles, uint width, uint height, uint identifier){
 }
 
 
-void tunnel_bnd(Particle* particles, uint width, uint height, uint identifier){
+void TunnelFluid::set_boundaries(Particle* particles, uint width, uint height, uint identifier){
 
+    for(int j = 1; j < height - 1; j++){
+        Particle& p = particles[coords2index(1, j, width)];
+        
+        if(j >= 40 && j <= 60){
+            p.smoke = 0.5;
+        }
+
+        p.vx = 50;
+    }
 
     //top and bottom
     for(uint i = 1; i < width - 1; i++){

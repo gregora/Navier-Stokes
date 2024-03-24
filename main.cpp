@@ -57,7 +57,19 @@ int main(int args, char** argv){
 
     }
 
-    Fluid f(WIDTH, HEIGHT, 1);
+    Fluid* fluid = nullptr;
+
+    if(example == 1){
+        fluid = example1(WIDTH, HEIGHT, 1);
+    }else if (example == 2){
+        fluid = example2(WIDTH, HEIGHT, 1);
+    }else if (example == 3){
+        fluid = tunnel(WIDTH, HEIGHT, 1);            
+    }
+    
+    Fluid& f = *fluid;
+
+
     f.gs_iters = 20;
     f.threads = threads;
     f.dx = 50.0 / HEIGHT;
@@ -66,18 +78,7 @@ int main(int args, char** argv){
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Fluid Simulation");
 
     int frames = (int) (simulation_time / delta);
-    for(int frame = 0; frame < frames; frame++){
-
-        
-        if(example == 1){
-            example1(f);
-        }else if (example == 2){
-            example2(f);
-        }else if (example == 3){
-            tunnel(f);            
-        }
-        
-        
+    for(int frame = 0; frame < frames; frame++){      
 
         auto start = std::chrono::high_resolution_clock::now();
         f.physics(delta);
@@ -107,5 +108,7 @@ int main(int args, char** argv){
 		system("rm -r render/*.png");
 		printf("Done.\n");
 	}
+
+    delete fluid;
 
 }

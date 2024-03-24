@@ -1,58 +1,24 @@
 #include "examples.h"
 
 
+Fluid* example1(uint width, uint height, float dx){
 
-void example1(Fluid& f){
-
-    for(int i = 0; i < f.width; i++){
-        for(int j = 0; j < f.height; j++){
-        
-            if(i >= 10 && i <= 20 && j >= 40 && j <= 44){
-                f.particles[coords2index(i, j, f.width)].Fx = 100;
-                f.particles[coords2index(i, j, f.width)].smoke = 0.5;
-            }
-
-            if(j >= 10 && j <= 20 && i >= 28 && i <= 32){
-                f.particles[coords2index(i, j, f.width)].Fy = 200;
-                f.particles[coords2index(i, j, f.width)].smoke = 0.5;
-            }
-
-        }
-    }
+    ExampleFluid1* fluid = new ExampleFluid1(width, height, 1);
+    return fluid;
 
 }
 
-void example2(Fluid& f){
+Fluid* example2(uint width, uint height, float dx){
 
-    for(int i = 0; i < f.width; i++){
-        for(int j = 0; j < f.height; j++){
-        
-            if(i >= 10 && i <= 20 && j >= 40 && j <= 44){
-                f.particles[coords2index(i, j, f.width)].Fx = 100;
-                f.particles[coords2index(i, j, f.width)].smoke = 0.5;
-            }
-
-            if(j >= 10 && j <= 20 && i >= 28 && i <= 32){
-                f.particles[coords2index(i, j, f.width)].Fy = 200;
-                f.particles[coords2index(i, j, f.width)].smoke = 0.5;
-            }
-
-        }
-    }
+    ExampleFluid2* fluid = new ExampleFluid2(width, height, 1);
+    return fluid;
 
 }
 
-void tunnel(Fluid& f){
+Fluid* tunnel(uint width, uint height, float dx){
 
-    for(int j = 1; j < f.height - 1; j++){
-        Particle& p = f.particles[coords2index(1, j, f.width)];
-        
-        if(j >= 40 && j <= 60){
-            p.smoke = 0.5;
-        }
-
-        p.vx = 50;
-    }
+    TunnelFluid* fluid = new TunnelFluid(width, height, 1);
+    return fluid;
 
 }
 

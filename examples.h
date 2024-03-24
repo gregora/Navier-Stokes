@@ -1,6 +1,7 @@
 #include "Fluid.h"
 #include "misc.h"
 
-void example1(Fluid& f);
-void example2(Fluid& f);
-void tunnel(Fluid& f);
+
+Fluid* example1(uint width, uint height, float dx);
+Fluid* example2(uint width, uint height, float dx);
+Fluid* tunnel(uint width, uint height, float dx);
