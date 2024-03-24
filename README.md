@@ -17,3 +17,14 @@ Run `./main.out` in the root directory. The program supports the following comma
 * `-velocities` - render velocity field together with smoke
 * `-threads <threads>` - number of CPU threads to use
 * `-render` - renders the system to a video file in the `render` directory as `output.mp4`
+
+### Examples
+
+#### Example 1 (Colliding plumes)
+![Example 1](render/example1.png)
+
+#### Example 2 (Colliding plumes and a wall)
+![Example 2](render/example2.png)
+
+#### Example 3 (Wind tunnel)
+![Example 3](render/example3.png)

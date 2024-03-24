@@ -34,5 +34,10 @@
 # Render files
 render/*
 
+# Unignore images
+!render/example1.png
+!render/example2.png
+!render/example3.png
+
 # Vscode files
 .vscode/*
