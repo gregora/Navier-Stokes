@@ -39,5 +39,8 @@ render/*
 !render/example2.png
 !render/example3.png
 
+!render/smoke_collision4.mp4
+!render/wind_tunnel.mp4
+
 # Vscode files
 .vscode/*
