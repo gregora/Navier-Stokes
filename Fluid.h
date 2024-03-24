@@ -42,15 +42,16 @@ class Fluid {
         uint height;
         float dx;
 
+        bool show_warnings = false;
+
         uint threads = 1; // Number of threads to use
         
         uint gs_iters = 20; // Number of Gauss-Seidel iterations
 
-        bool show_warnings = true;
-
         Particle* particles;
 
         Fluid(uint width, uint height, float dx);
+        ~Fluid();
 
         void diffuse_iteration(Particle* newParticles, float delta, float viscosity, uint i, uint j);
         void diffuse_sector(Particle* newParticles, float delta, float viscosity, uint start, uint end);
@@ -68,18 +69,16 @@ class Fluid {
 
         void physics(float delta);
 
-        //custom set_boundaries function
-        void (*set_boundaries)(Particle* particles, uint width, uint height, uint identifier) = nullptr;
+        void set_boundaries(Particle* particles, uint width, uint height, uint identifier);
 
         float energy();
-
+        float max_delta();
         float max_velocity();
-        float max_delta(); //maximum delta for stability
+
+        void drawParticles(sf::RenderTarget& target, int block_size, bool render_energy, bool render_velocities, bool render_pressure);
+
+
 };
 
-
-void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size = 20, bool render_energy = true, bool render_velocities = true);
-
-void set_bnd(Particle* particles, uint width, uint height, uint identifier);
 
 #endif

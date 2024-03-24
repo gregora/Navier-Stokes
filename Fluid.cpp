@@ -18,9 +18,10 @@ Fluid::Fluid(uint width, uint height, float dx){
     this->dx = dx;
 
     particles = new Particle[width * height];
+}
 
-    this -> set_boundaries = set_bnd;
-
+Fluid::~Fluid(){
+    delete particles;
 }
 
 void Fluid::diffuse_iteration(Particle* newParticles, float delta, float viscosity, uint i, uint j){
@@ -250,7 +251,7 @@ float Fluid::energy(){
 
 
 
-void set_bnd(Particle* particles, uint width, uint height, uint identifier){
+void Fluid::set_boundaries(Particle* particles, uint width, uint height, uint identifier){
 
     /*
     IDENTIFIERS:
@@ -317,14 +318,14 @@ void set_bnd(Particle* particles, uint width, uint height, uint identifier){
 }
 
 
-void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool render_energy, bool render_velocities){
+void Fluid::drawParticles(sf::RenderTarget& target, int block_size, bool render_energy, bool render_velocities, bool render_pressure){
 
     sf::RectangleShape rect(sf::Vector2f(block_size, block_size));
     Arrow arrow;
 
-    for(int i = 0; i < f.width; i++){
-        for(int j = 0; j < f.height; j++){
-            Particle& p = f.particles[coords2index(i, j, f.width)];
+    for(int i = 0; i < width; i++){
+        for(int j = 0; j < height; j++){
+            Particle& p = particles[coords2index(i, j, width)];
 
             float speed = 70*sqrt(p.vx * p.vx + p.vy * p.vy);
             
@@ -332,8 +333,14 @@ void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool rend
                 speed = 255;
             }
 
-            //float p_color = 125 + 50*p.p;
-            float p_color = 255*p.smoke;
+            float p_color = 0;
+
+            if(render_pressure){
+                p_color = 125 + p.p;
+            }else{
+                p_color = 255*p.smoke;
+            }
+
 
             if(p_color > 255){
                 p_color = 255;
@@ -344,10 +351,11 @@ void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool rend
                 p_color = 0;
             }
             
-
+            sf::Color c(255, 255, 255);
+            c.a = p_color;
             rect.setPosition(i * block_size, j * block_size);
-            rect.setFillColor(sf::Color(p_color, p_color, p_color));
-            window.draw(rect);
+            rect.setFillColor(c);
+            target.draw(rect);
 
             float ang = atan2(p.vy, p.vx);
 
@@ -362,8 +370,9 @@ void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool rend
             if(speed > 100){
                 speed = 100;
             }
-            arrow.setScale(block_size * speed / 1000, block_size * speed / 1000);
-            window.draw(arrow);
+            arrow.setScale(block_size * speed / 2000, block_size * speed / 2000);
+
+            target.draw(arrow);
 
         }
     }
@@ -371,7 +380,7 @@ void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool rend
 
     if(render_energy){
         //total energy as text
-        float eng = f.energy();
+        float eng = energy();
 
         sf::Font font;
         font.loadFromFile("fonts/Prototype.ttf");
@@ -387,10 +396,11 @@ void drawParticles(sf::RenderWindow& window, Fluid& f, int block_size, bool rend
         text.setStyle(sf::Text::Bold);
         text.setPosition(10, 10);
 
-        window.draw(text);
+        target.draw(text);
     }
 
 }
+
 
 
 

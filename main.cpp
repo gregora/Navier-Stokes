@@ -68,6 +68,7 @@ int main(int args, char** argv){
     int frames = (int) (simulation_time / delta);
     for(int frame = 0; frame < frames; frame++){
 
+        
         if(example == 1){
             example1(f);
         }else if (example == 2){
@@ -76,13 +77,14 @@ int main(int args, char** argv){
             tunnel(f);            
         }
         
+        
 
         auto start = std::chrono::high_resolution_clock::now();
         f.physics(delta);
         auto end = std::chrono::high_resolution_clock::now();
 
         window.clear();
-        drawParticles(window, f, block_size, render_energy, render_velocities);
+        f.drawParticles(window, block_size, render_energy, render_velocities, false);
         
         if(example == 3){
             postProcessingTunnel(window, block_size);

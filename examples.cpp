@@ -1,5 +1,7 @@
 #include "examples.h"
 
+
+
 void example1(Fluid& f){
 
     for(int i = 0; i < f.width; i++){
@@ -22,7 +24,6 @@ void example1(Fluid& f){
 
 void example2(Fluid& f){
 
-    f.set_boundaries = set_bnd2;
     for(int i = 0; i < f.width; i++){
         for(int j = 0; j < f.height; j++){
         
@@ -43,7 +44,6 @@ void example2(Fluid& f){
 
 void tunnel(Fluid& f){
 
-    f.set_boundaries = tunnel_bnd;
     for(int j = 1; j < f.height - 1; j++){
         Particle& p = f.particles[coords2index(1, j, f.width)];
         
@@ -55,3 +55,4 @@ void tunnel(Fluid& f){
     }
 
 }
+
