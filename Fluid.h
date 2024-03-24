@@ -69,7 +69,7 @@ class Fluid {
 
         void physics(float delta);
 
-        void set_boundaries(Particle* particles, uint width, uint height, uint identifier);
+        virtual void set_boundaries(Particle* particles, uint width, uint height, uint identifier);
 
         float energy();
         float max_delta();
