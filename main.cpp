@@ -74,7 +74,7 @@ int main(int args, char** argv){
     f.threads = threads;
     f.dx = 50.0 / HEIGHT;
     f.show_warnings = warn;
-    f.debug_performance = true;
+    f.debug_performance = false;
 
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Fluid Simulation");
 

@@ -221,21 +221,25 @@ void Fluid::physics(float delta){
 
     external_forces(delta);
     auto external_forces_time = std::chrono::high_resolution_clock::now();
+
     advect(delta);
     auto advect_time = std::chrono::high_resolution_clock::now();
+
     diffuse(delta);
     auto diffuse_time = std::chrono::high_resolution_clock::now();
+
     incompressibility(delta);
     auto incompressibility_time = std::chrono::high_resolution_clock::now();
     
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = end - start;
-    std::chrono::duration<double> elapsed_external_forces = external_forces_time - start;
-    std::chrono::duration<double> elapsed_advect = advect_time - external_forces_time;
-    std::chrono::duration<double> elapsed_diffuse = diffuse_time - advect_time;
-    std::chrono::duration<double> elapsed_incompressibility = incompressibility_time - diffuse_time;
 
     if (debug_performance){
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed = end - start;
+        std::chrono::duration<double> elapsed_external_forces = external_forces_time - start;
+        std::chrono::duration<double> elapsed_advect = advect_time - external_forces_time;
+        std::chrono::duration<double> elapsed_diffuse = diffuse_time - advect_time;
+        std::chrono::duration<double> elapsed_incompressibility = incompressibility_time - diffuse_time;
+
         printf("Physics time: %fs:\n", elapsed.count());    
         printf("    - External forces time: %fs (%f%)\n", elapsed_external_forces.count(), elapsed_external_forces.count() / elapsed.count() * 100);
         printf("    - Advection time: %fs (%f%)\n", elapsed_advect.count(), elapsed_advect.count() / elapsed.count() * 100);
