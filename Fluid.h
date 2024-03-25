@@ -42,8 +42,6 @@ class Fluid {
         uint height;
         float dx;
 
-        bool show_warnings = false;
-
         uint threads = 1; // Number of threads to use
         
         uint gs_iters = 20; // Number of Gauss-Seidel iterations
@@ -76,6 +74,9 @@ class Fluid {
         float max_velocity();
 
         void drawParticles(sf::RenderTarget& target, int block_size, bool render_energy, bool render_velocities, bool render_pressure);
+
+        bool show_warnings = false;
+        bool debug_performance = false;
 
 
 };
