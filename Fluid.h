@@ -78,6 +78,9 @@ class Fluid {
         bool show_warnings = false;
         bool debug_performance = false;
 
+    private:
+        Particle* newParticles;
+
 
 };
 

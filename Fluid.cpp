@@ -18,9 +18,11 @@ Fluid::Fluid(uint width, uint height, float dx){
     this->dx = dx;
 
     particles = new Particle[width * height];
+    newParticles = new Particle[width * height];
 }
 
 Fluid::~Fluid(){
+    delete newParticles;
     delete particles;
 }
 
@@ -436,7 +438,6 @@ void Fluid::diffuse_sector(Particle* newParticles, float delta, float viscosity,
 
 
 void Fluid::diffuse(float delta, float viscosity){
-    Particle* newParticles = new Particle[width * height];
 
     std::thread threads_array[threads];
     for(uint k = 0; k < gs_iters; k++){       
@@ -455,9 +456,9 @@ void Fluid::diffuse(float delta, float viscosity){
 
     }
 
-    delete particles;
+    Particle* oldParticles = particles;
     particles = newParticles;
-
+    newParticles = oldParticles;
 }
 
 
@@ -477,8 +478,6 @@ void Fluid::advect_sector(Particle* newParticles, float delta, uint start, uint 
 }
 
 void Fluid::advect(float delta){
-    Particle* newParticles = new Particle[width * height];
-
 
     if(show_warnings){
         float max_dt = max_delta();
@@ -503,9 +502,10 @@ void Fluid::advect(float delta){
     set_boundaries(newParticles, width, height, 2);
     set_boundaries(newParticles, width, height, 5);
 
-
-    delete particles;
+    Particle* oldParticles = particles;
     particles = newParticles;
+    newParticles = oldParticles;
+
 
 }
 
