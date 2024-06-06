@@ -3,9 +3,7 @@ A numeric solver for Navier-Stokes equations
 
 [https://www.youtube.com/watch?v=mPZd5Lwb0C4](https://www.youtube.com/watch?v=mPZd5Lwb0C4)
 
-
-https://github.com/gregora/Navier-Stokes/assets/26600857/d71b1396-e2c7-4c04-b878-734ec451c94e
-
+https://github.com/gregora/Navier-Stokes/assets/26600857/768d9d3f-e387-4fc4-a2e8-88951ca40ec4
 
 ## Theory
 
