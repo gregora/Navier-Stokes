@@ -1,6 +1,7 @@
 # Navier-Stokes
 A numeric solver for Navier-Stokes equations
-[https://www.youtube.com/watch?v=mPZd5Lwb0C4](https://www.youtube.com/watch?v=mPZd5Lwb0C4)
+
+[![Navier-Stokes](https://img.youtube.com/vi/mPZd5Lwb0C4/0.jpg)](https://www.youtube.com/watch?v=mPZd5Lwb0C4)
 
 ## Theory
 
