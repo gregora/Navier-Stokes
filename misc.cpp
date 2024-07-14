@@ -2,19 +2,17 @@
 
 void ExampleFluid1::set_boundaries(Particle* particles, uint width, uint height, uint identifier){
 
-    for(int i = 0; i < width; i++){
-        for(int j = 0; j < height; j++){
-        
-            if(i >= 10 && i <= 20 && j >= 40 && j <= 44){
-                particles[coords2index(i, j, width)].Fx = 100;
-                particles[coords2index(i, j, width)].smoke = 0.5;
-            }
+    for(int i = 28; i <= 32; i++){
+        for(int j = 10; j <= 20; j++){     
+            particles[coords2index(i, j, width)].Fy = 200;
+            particles[coords2index(i, j, width)].smoke = 0.5;
+        }
+    }
 
-            if(j >= 10 && j <= 20 && i >= 28 && i <= 32){
-                particles[coords2index(i, j, width)].Fy = 200;
-                particles[coords2index(i, j, width)].smoke = 0.5;
-            }
-
+    for(int i = 10; i <= 20; i++){
+        for(int j = 40; j <= 44; j++){
+            particles[coords2index(i, j, width)].Fx = 100;
+            particles[coords2index(i, j, width)].smoke = 0.5;
         }
     }
 
