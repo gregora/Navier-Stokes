@@ -33,7 +33,9 @@ class Particle {
 
 };
 
-int coords2index(int x, int y, int width);
+#define coords2index(x, y, width) ((int) ((y) * (width) + (x)))
+
+//int coords2index(int x, int y, int width);
 
 class Fluid {
 

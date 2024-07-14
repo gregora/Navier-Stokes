@@ -1,7 +1,6 @@
 main.out: main.cpp Arrow.o Fluid.o misc.o examples.o
 	g++ main.cpp Arrow.o Fluid.o misc.o examples.o -o main.out -lsfml-graphics -lsfml-window -lsfml-system -pthread -std=c++11
 
-
 Arrow.o: Arrow.cpp Arrow.h
 	g++ -c Arrow.cpp -lsfml-graphics -lsfml-window -lsfml-system -std=c++11
 

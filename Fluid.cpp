@@ -3,11 +3,12 @@
 #include <chrono>
 
 
+// now as macro
+/*
 int coords2index(int x, int y, int width){
-
     return y * width + x;
-
 }
+*/
 
 
 Fluid::Fluid(uint width, uint height, float dx){
