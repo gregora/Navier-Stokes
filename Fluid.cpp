@@ -231,7 +231,7 @@ void Fluid::physics(float delta){
 
     incompressibility(delta);
     auto incompressibility_time = std::chrono::high_resolution_clock::now();
-    
+
 
     if (debug_performance){
         auto end = std::chrono::high_resolution_clock::now();

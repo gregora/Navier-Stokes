@@ -79,7 +79,20 @@ int main(int args, char** argv){
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Fluid Simulation");
 
     int frames = (int) (simulation_time / delta);
-    for(int frame = 0; frame < frames; frame++){      
+    int frame = 0;
+    while(window.isOpen()){
+
+        sf::Event event;
+        while (window.pollEvent(event)){
+            if (event.type == sf::Event::Closed){
+                window.close();
+            }
+        }
+        
+        if(frame > frames){
+            break;
+        }
+        frame += 1;
 
         auto start = std::chrono::high_resolution_clock::now();
         f.physics(delta);
