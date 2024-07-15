@@ -335,12 +335,8 @@ void Fluid::drawParticles(sf::RenderTarget& target, int block_size, bool render_
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    //sf::RectangleShape rect(sf::Vector2f(block_size, block_size));
-    
     sf::Uint8 pixels[width * height * 4];
     
-    Arrow arrow;
-
     for(int i = 0; i < width; i++){
         for(int j = 0; j < height; j++){
             Particle& p = particles[coords2index(i, j, width)];
@@ -385,11 +381,22 @@ void Fluid::drawParticles(sf::RenderTarget& target, int block_size, bool render_
     target.draw(sprite);
 
     if(render_velocities){
+
+        Arrow arrow;
         for(int i = 0; i < width; i++){
             for(int j = 0; j < height; j++){
                 Particle& p = particles[coords2index(i, j, width)];
 
                 float speed = 70*sqrt(p.vx * p.vx + p.vy * p.vy);
+
+                if(speed <= 0){
+                    continue;
+                }
+
+                if(speed > 255){
+                    speed = 255;
+                }
+
 
                 float ang = atan2(p.vy, p.vx);
                 ang = 90 + ang * 180 / M_PI;
