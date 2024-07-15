@@ -1,5 +1,5 @@
 # Navier-Stokes
-A numeric solver for Navier-Stokes equations
+A numeric solver for Navier-Stokes equations. My [wind tunnel simulation project](https://github.com/gregora/Wind-Tunnel) was derived from this library.
 
 [https://www.youtube.com/watch?v=mPZd5Lwb0C4](https://www.youtube.com/watch?v=mPZd5Lwb0C4)
 
