@@ -374,41 +374,40 @@ void Fluid::drawParticles(sf::RenderTarget& target, int block_size, bool render_
             pixels[4 * (j * width + i) + 2] = p_color;
             pixels[4 * (j * width + i) + 3] = 255;
         }
+    }
 
-        sf::Texture texture;
-        texture.create(width, height);
-        texture.update(pixels, width, height, 0, 0);
+    sf::Texture texture;
+    texture.create(width, height);
+    texture.update(pixels, width, height, 0, 0);
 
-        sf::Sprite sprite(texture);
-        sprite.setScale(block_size, block_size);
-        target.draw(sprite);
+    sf::Sprite sprite(texture);
+    sprite.setScale(block_size, block_size);
+    target.draw(sprite);
 
-        if(render_velocities){
-            for(int i = 0; i < width; i++){
-                for(int j = 0; j < height; j++){
-                    Particle& p = particles[coords2index(i, j, width)];
+    if(render_velocities){
+        for(int i = 0; i < width; i++){
+            for(int j = 0; j < height; j++){
+                Particle& p = particles[coords2index(i, j, width)];
 
-                    float speed = 70*sqrt(p.vx * p.vx + p.vy * p.vy);
+                float speed = 70*sqrt(p.vx * p.vx + p.vy * p.vy);
 
-                    float ang = atan2(p.vy, p.vx);
-                    ang = 90 + ang * 180 / M_PI;
+                float ang = atan2(p.vy, p.vx);
+                ang = 90 + ang * 180 / M_PI;
 
-                    arrow.setPosition(i * block_size + block_size/2, j * block_size + block_size/2);
-                    arrow.setRotation(ang);
-                    arrow.setOpacity(speed);
+                arrow.setPosition(i * block_size + block_size/2, j * block_size + block_size/2);
+                arrow.setRotation(ang);
+                arrow.setOpacity(speed);
 
-                    if(speed > 100){
-                        speed = 100;
-                    }
-
-                    arrow.setScale(block_size * speed / 2000, block_size * speed / 2000);
-
-                    target.draw(arrow);
-
+                if(speed > 100){
+                    speed = 100;
                 }
+
+                arrow.setScale(block_size * speed / 2000, block_size * speed / 2000);
+
+                target.draw(arrow);
+
             }
         }
-
     }
 
 
