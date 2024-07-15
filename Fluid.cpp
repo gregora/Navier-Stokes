@@ -335,10 +335,12 @@ void Fluid::drawParticles(sf::RenderTarget& target, int block_size, bool render_
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    sf::RectangleShape rect(sf::Vector2f(block_size, block_size));
-    Arrow arrow;
-    sf::Color c(255, 255, 255);
+    //sf::RectangleShape rect(sf::Vector2f(block_size, block_size));
     
+    sf::Uint8 pixels[width * height * 4];
+    
+    Arrow arrow;
+
     for(int i = 0; i < width; i++){
         for(int j = 0; j < height; j++){
             Particle& p = particles[coords2index(i, j, width)];
@@ -365,33 +367,48 @@ void Fluid::drawParticles(sf::RenderTarget& target, int block_size, bool render_
             if (p_color < 0)
             {
                 p_color = 0;
-            }
-            
-            c.a = p_color;
-            rect.setPosition(i * block_size, j * block_size);
-            rect.setFillColor(c);
-            target.draw(rect);
+            } 
 
-
-            if (render_velocities){
-            
-                float ang = atan2(p.vy, p.vx);
-                ang = 90 + ang * 180 / M_PI;
-
-                arrow.setPosition(i * block_size + block_size/2, j * block_size + block_size/2);
-                arrow.setRotation(ang);
-                arrow.setOpacity(speed);
-
-                if(speed > 100){
-                    speed = 100;
-                }
-
-                arrow.setScale(block_size * speed / 2000, block_size * speed / 2000);
-
-                target.draw(arrow);
-            }
-
+            pixels[4 * (j * width + i) + 0] = p_color;
+            pixels[4 * (j * width + i) + 1] = p_color;
+            pixels[4 * (j * width + i) + 2] = p_color;
+            pixels[4 * (j * width + i) + 3] = 255;
         }
+
+        sf::Texture texture;
+        texture.create(width, height);
+        texture.update(pixels, width, height, 0, 0);
+
+        sf::Sprite sprite(texture);
+        sprite.setScale(block_size, block_size);
+        target.draw(sprite);
+
+        if(render_velocities){
+            for(int i = 0; i < width; i++){
+                for(int j = 0; j < height; j++){
+                    Particle& p = particles[coords2index(i, j, width)];
+
+                    float speed = 70*sqrt(p.vx * p.vx + p.vy * p.vy);
+
+                    float ang = atan2(p.vy, p.vx);
+                    ang = 90 + ang * 180 / M_PI;
+
+                    arrow.setPosition(i * block_size + block_size/2, j * block_size + block_size/2);
+                    arrow.setRotation(ang);
+                    arrow.setOpacity(speed);
+
+                    if(speed > 100){
+                        speed = 100;
+                    }
+
+                    arrow.setScale(block_size * speed / 2000, block_size * speed / 2000);
+
+                    target.draw(arrow);
+
+                }
+            }
+        }
+
     }
 
 
