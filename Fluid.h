@@ -83,6 +83,9 @@ class Fluid {
     private:
         Particle* newParticles;
 
+        Particle* particles1_CUDA;
+        Particle* particles2_CUDA;
+
 
 };
 
