@@ -200,6 +200,25 @@ void Fluid::external_forces(float delta){
     }
 }
 
+
+__global__
+void pressure_kernel(float delta, float dx, Particle* particles, uint width, uint height){
+    uint i = blockIdx.x + 1;
+    uint j = threadIdx.x + 1;
+
+    Particle& p = particles[coords2index(i, j, width)];
+
+    Particle& p1 = particles[coords2index(i + 1, j, width)];
+    Particle& p2 = particles[coords2index(i - 1, j, width)];
+
+    Particle& p3 = particles[coords2index(i, j + 1, width)];
+    Particle& p4 = particles[coords2index(i, j - 1, width)];
+
+    p.p = (p1.p + p2.p + p3.p + p4.p - p.div * dx * dx / delta) / 4;
+}
+
+
+
 void Fluid::pressure_iteration(float delta, uint i, uint j){
     Particle& p = particles[coords2index(i, j, width)];
 
@@ -237,15 +256,13 @@ void Fluid::incompressibility(float delta){
     set_boundaries(particles, width, height, 4);
 
     for(uint k = 0; k < gs_iters; k++){
-        std::thread threads_array[threads];
 
-        for(uint t = 0; t < threads; t++){
-            threads_array[t] = std::thread(&Fluid::pressure_sector, this, delta, t * width / threads, (t + 1) * width / threads);
-        }
+        cudaMemcpy(particles1_CUDA, particles, width * height * sizeof(Particle), cudaMemcpyHostToDevice);
 
-        for(uint t = 0; t < threads; t++){
-            threads_array[t].join();
-        }
+        pressure_kernel<<<width - 2, height - 2>>>(delta, dx, particles1_CUDA, width, height);
+        cudaDeviceSynchronize();
+
+        cudaMemcpy(particles, particles1_CUDA, width * height * sizeof(Particle), cudaMemcpyDeviceToHost);
 
         set_boundaries(particles, width, height, 4);
 
