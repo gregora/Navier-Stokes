@@ -40,7 +40,11 @@ The second equation is the continuity equation, which states that the divergence
 * ffmpeg (rendering only)
 
 ### Compilation
-Run `make` in the root directory.
+Run `make` in the root directory. This will build both CPU and CUDA versions.
+
+To only compile the CPU version run `make main.out`.
+
+For CUDA version run `make mainCUDA.out`.
 
 ### Running
 Run `./main.out` in the root directory. The program supports the following command line arguments:
