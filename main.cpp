@@ -20,7 +20,7 @@ int main(int args, char** argv){
 
     uint block_size = (uint) (WINDOW_WIDTH / WIDTH);
 
-    float simulation_time = 100;
+    float simulation_time = 200;
     float delta = 0.04;
     uint threads = 1;
     uint example = 1;
@@ -70,7 +70,7 @@ int main(int args, char** argv){
     Fluid& f = *fluid;
 
 
-    f.gs_iters = 40;
+    f.gs_iters = 100;
     f.threads = threads;
     f.dx = 50.0 / HEIGHT;
     f.show_warnings = warn;

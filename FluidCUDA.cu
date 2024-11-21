@@ -256,7 +256,6 @@ void Fluid::incompressibility(float delta){
     set_boundaries(particles, width, height, 4);
 
     for(uint k = 0; k < gs_iters; k++){
-
         cudaMemcpy(particles1_CUDA, particles, width * height * sizeof(Particle), cudaMemcpyHostToDevice);
 
         pressure_kernel<<<width - 2, height - 2>>>(delta, dx, particles1_CUDA, width, height);
@@ -265,6 +264,20 @@ void Fluid::incompressibility(float delta){
         cudaMemcpy(particles, particles1_CUDA, width * height * sizeof(Particle), cudaMemcpyDeviceToHost);
 
         set_boundaries(particles, width, height, 4);
+
+        /*
+        std::thread threads_array[threads];
+
+        for(uint t = 0; t < threads; t++){
+            threads_array[t] = std::thread(&Fluid::pressure_sector, this, delta, t * width / threads, (t + 1) * width / threads);
+        }
+
+        for(uint t = 0; t < threads; t++){
+            threads_array[t].join();
+        }
+
+        set_boundaries(particles, width, height, 4);
+        */
 
     }
 
